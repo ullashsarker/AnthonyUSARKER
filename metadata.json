@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Anthony Ullash Sarker Portfolio",
+  "description": "Highly animated, ultra-modern, and premium single-page portfolio website for Anthony Ullash Sarker, Full-Stack Software Developer, AI Operations Expert, and Email Marketing Specialist.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
