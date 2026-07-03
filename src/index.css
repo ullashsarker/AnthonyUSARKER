@@ -8,14 +8,14 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
   background-color: #050506;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Custom Scrollbar */

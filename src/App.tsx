@@ -39,81 +39,94 @@ export default function App() {
 
   // Audio & Page States
   const [isLoaded, setIsLoaded] = useState(true);
-  const [ytPlayer, setYtPlayer] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const hasInteractedRef = useRef(false);
+  const hasSpokenRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Robust voice intro: waits for voices to load, then speaks once
   const speakWelcomeMessage = () => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
+    if (!("speechSynthesis" in window)) return;
+    if (hasSpokenRef.current) return;
 
-      const text = "Hello, welcome to my portfolio website. It's me, Anthony. I am glad you have visited my personal workspace. As a full-stack developer and AI operations specialist, I focus on building smart, automated systems and high-performance digital environments. Please feel free to explore my projects. If you would like to connect, you can reach out via the contact section. Enjoy your visit.";
+    const text = "Hello, welcome to my portfolio website. It's me, Anthony. I am glad you have visited my personal workspace. As a full-stack developer and AI operations specialist, I focus on building smart, automated systems and high-performance digital environments. Please feel free to explore my projects. If you would like to connect, you can reach out via the contact section. Enjoy your visit.";
+
+    const doSpeak = () => {
+      if (hasSpokenRef.current) return;
+      
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length === 0) return; // Voices not loaded yet
+      
+      hasSpokenRef.current = true;
+      window.speechSynthesis.cancel(); // Clear any queued utterances
       
       const utterance = new SpeechSynthesisUtterance(text);
       
-      // Select a premium English male voice if possible
-      const voices = window.speechSynthesis.getVoices();
+      // Select a premium English male voice
       const preferredVoice = voices.find(
         (v) => v.lang.startsWith("en") && 
                (v.name.toLowerCase().includes("male") || 
                 v.name.includes("David") || 
                 v.name.includes("Alex") || 
-                v.name.includes("Daniel"))
+                v.name.includes("Daniel") ||
+                v.name.includes("Google UK English Male"))
       ) || voices.find((v) => v.lang.startsWith("en"));
       
       if (preferredVoice) {
         utterance.voice = preferredVoice;
       }
       
-      utterance.rate = 0.90; // Calmer, clearer speed
+      utterance.rate = 0.90;
       utterance.pitch = 1.0;
-      utterance.volume = 0.40; // Soft and premium volume
+      utterance.volume = 0.40;
       
       window.speechSynthesis.speak(utterance);
+    };
+
+    // Try immediately if voices are already loaded
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      doSpeak();
+    } else {
+      // Wait for voices to become available, then speak
+      const onVoicesReady = () => {
+        doSpeak();
+        window.speechSynthesis.removeEventListener("voiceschanged", onVoicesReady);
+      };
+      window.speechSynthesis.addEventListener("voiceschanged", onVoicesReady);
     }
   };
 
-  // Attempt to speak welcome message immediately on load if browser permits
+  // Initialize Native HTML5 Audio player on mount
   useEffect(() => {
-    const trySpeak = () => {
-      if (hasInteractedRef.current) return;
-      try {
-        speakWelcomeMessage();
-      } catch (err) {
-        console.warn("Immediate autoplay of voice speech synthesis was prevented by browser.");
-      }
-    };
-
-    trySpeak();
-
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.addEventListener("voiceschanged", trySpeak);
-    }
+    const audio = new Audio("/audio/bg_music.mp3");
+    audio.loop = true;
+    audio.volume = 0.08; // Soft background volume (8%)
+    audioRef.current = audio;
 
     return () => {
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.removeEventListener("voiceschanged", trySpeak);
-      }
+      audio.pause();
     };
   }, []);
 
-  // Detect first user interaction to trigger speech and audio as a seamless fallback
+  // Detect first user interaction to trigger speech and audio
   useEffect(() => {
     const handleFirstInteraction = () => {
       if (hasInteractedRef.current) return;
       hasInteractedRef.current = true;
 
-      // Start the voice introduction
-      speakWelcomeMessage();
+      // Small delay ensures browser audio context is fully unlocked
+      setTimeout(() => {
+        // Start the voice introduction
+        speakWelcomeMessage();
 
-      // Trigger YouTube background audio player
-      if (ytPlayer) {
-        try {
-          ytPlayer.playVideo();
-        } catch (err) {
-          console.error("Autoplay failed on first interaction:", err);
+        // Start background music
+        if (audioRef.current && isPlaying) {
+          audioRef.current.play().catch(err => {
+            console.warn("Audio playback blocked:", err);
+          });
         }
-      }
+      }, 100);
 
       // Cleanup event listeners
       window.removeEventListener("mousedown", handleFirstInteraction);
@@ -122,10 +135,11 @@ export default function App() {
       window.removeEventListener("scroll", handleFirstInteraction);
     };
 
-    window.addEventListener("mousedown", handleFirstInteraction);
-    window.addEventListener("keydown", handleFirstInteraction);
-    window.addEventListener("touchstart", handleFirstInteraction);
-    window.addEventListener("scroll", handleFirstInteraction);
+    // Use passive event listeners to avoid blocking the browser's touch/scroll thread
+    window.addEventListener("mousedown", handleFirstInteraction, { passive: true });
+    window.addEventListener("keydown", handleFirstInteraction, { passive: true });
+    window.addEventListener("touchstart", handleFirstInteraction, { passive: true });
+    window.addEventListener("scroll", handleFirstInteraction, { passive: true });
 
     return () => {
       window.removeEventListener("mousedown", handleFirstInteraction);
@@ -133,69 +147,20 @@ export default function App() {
       window.removeEventListener("touchstart", handleFirstInteraction);
       window.removeEventListener("scroll", handleFirstInteraction);
     };
-  }, [ytPlayer]);
-
-  // YouTube IFrame Player API Integration
-  useEffect(() => {
-    let tag = document.getElementById("yt-iframe-api-script");
-    if (!tag) {
-      tag = document.createElement("script");
-      tag.id = "yt-iframe-api-script";
-      (tag as HTMLScriptElement).src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    }
-
-    (window as any).onYouTubeIframeAPIReady = () => {
-      const player = new (window as any).YT.Player("youtube-bg-player", {
-        height: "0",
-        width: "0",
-        videoId: "bP9gMpl1gyQ",
-        playerVars: {
-          autoplay: 0,
-          loop: 1,
-          playlist: "bP9gMpl1gyQ",
-          controls: 0,
-          showinfo: 0,
-          rel: 0,
-          modestbranding: 1,
-          disablekb: 1,
-          fs: 0
-        },
-        events: {
-          onReady: (event: any) => {
-            event.target.setVolume(10); // play softly (10% volume)
-            setYtPlayer(event.target);
-            if (hasInteractedRef.current) {
-              event.target.playVideo();
-              setIsPlaying(true);
-            }
-          },
-          onStateChange: (event: any) => {
-            if (event.data === (window as any).YT.PlayerState.PLAYING) {
-              setIsPlaying(true);
-            }
-          }
-        }
-      });
-    };
-
-    return () => {
-      (window as any).onYouTubeIframeAPIReady = null;
-    };
-  }, []);
+  }, [isPlaying]);
 
   const toggleAudio = () => {
-    if (!ytPlayer) return;
+    if (!audioRef.current) return;
     try {
-      if (isPlaying) {
-        ytPlayer.pauseVideo();
+      const isActuallyPaused = audioRef.current.paused;
+      if (!isActuallyPaused && isPlaying) {
+        audioRef.current.pause();
         setIsPlaying(false);
         if ("speechSynthesis" in window) {
           window.speechSynthesis.cancel();
         }
       } else {
-        ytPlayer.playVideo();
+        audioRef.current.play().catch(err => console.error("Audio playback play failed:", err));
         setIsPlaying(true);
       }
     } catch (err) {
@@ -788,8 +753,7 @@ export default function App() {
       </footer>
       <AdminDashboardModal />
 
-      {/* Hidden YouTube background audio player container */}
-      <div id="youtube-bg-player" className="fixed bottom-0 right-0 w-0 h-0 opacity-0 pointer-events-none z-[-1]" />
+
 
       {/* Floating Audio Controller */}
       {isLoaded && (
