@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   User, 
@@ -11,7 +11,11 @@ import {
   Terminal, 
   Flame, 
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Menu,
+  X,
+  Volume2,
+  VolumeX
 } from "lucide-react";
 
 import ParticleBackground from "./components/ParticleBackground";
@@ -26,9 +30,178 @@ import ContactForm from "./components/ContactForm";
 import { usePortfolioImage } from "./lib/imageStorage";
 import AdminDashboardModal from "./components/AdminDashboardModal";
 
+
+
 export default function App() {
   const [activeSection, setActiveSection] = useState("hero");
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Audio & Page States
+  const [isLoaded, setIsLoaded] = useState(true);
+  const [ytPlayer, setYtPlayer] = useState<any>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const hasInteractedRef = useRef(false);
+
+  const speakWelcomeMessage = () => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+
+      const text = "Hello, welcome to my portfolio website. It's me, Anthony. I am glad you have visited my personal workspace. As a full-stack developer and AI operations specialist, I focus on building smart, automated systems and high-performance digital environments. Please feel free to explore my projects. If you would like to connect, you can reach out via the contact section. Enjoy your visit.";
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Select a premium English male voice if possible
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(
+        (v) => v.lang.startsWith("en") && 
+               (v.name.toLowerCase().includes("male") || 
+                v.name.includes("David") || 
+                v.name.includes("Alex") || 
+                v.name.includes("Daniel"))
+      ) || voices.find((v) => v.lang.startsWith("en"));
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+      
+      utterance.rate = 0.90; // Calmer, clearer speed
+      utterance.pitch = 1.0;
+      utterance.volume = 0.40; // Soft and premium volume
+      
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  // Attempt to speak welcome message immediately on load if browser permits
+  useEffect(() => {
+    const trySpeak = () => {
+      if (hasInteractedRef.current) return;
+      try {
+        speakWelcomeMessage();
+      } catch (err) {
+        console.warn("Immediate autoplay of voice speech synthesis was prevented by browser.");
+      }
+    };
+
+    trySpeak();
+
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.addEventListener("voiceschanged", trySpeak);
+    }
+
+    return () => {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.removeEventListener("voiceschanged", trySpeak);
+      }
+    };
+  }, []);
+
+  // Detect first user interaction to trigger speech and audio as a seamless fallback
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (hasInteractedRef.current) return;
+      hasInteractedRef.current = true;
+
+      // Start the voice introduction
+      speakWelcomeMessage();
+
+      // Trigger YouTube background audio player
+      if (ytPlayer) {
+        try {
+          ytPlayer.playVideo();
+        } catch (err) {
+          console.error("Autoplay failed on first interaction:", err);
+        }
+      }
+
+      // Cleanup event listeners
+      window.removeEventListener("mousedown", handleFirstInteraction);
+      window.removeEventListener("keydown", handleFirstInteraction);
+      window.removeEventListener("touchstart", handleFirstInteraction);
+      window.removeEventListener("scroll", handleFirstInteraction);
+    };
+
+    window.addEventListener("mousedown", handleFirstInteraction);
+    window.addEventListener("keydown", handleFirstInteraction);
+    window.addEventListener("touchstart", handleFirstInteraction);
+    window.addEventListener("scroll", handleFirstInteraction);
+
+    return () => {
+      window.removeEventListener("mousedown", handleFirstInteraction);
+      window.removeEventListener("keydown", handleFirstInteraction);
+      window.removeEventListener("touchstart", handleFirstInteraction);
+      window.removeEventListener("scroll", handleFirstInteraction);
+    };
+  }, [ytPlayer]);
+
+  // YouTube IFrame Player API Integration
+  useEffect(() => {
+    let tag = document.getElementById("yt-iframe-api-script");
+    if (!tag) {
+      tag = document.createElement("script");
+      tag.id = "yt-iframe-api-script";
+      (tag as HTMLScriptElement).src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+
+    (window as any).onYouTubeIframeAPIReady = () => {
+      const player = new (window as any).YT.Player("youtube-bg-player", {
+        height: "0",
+        width: "0",
+        videoId: "bP9gMpl1gyQ",
+        playerVars: {
+          autoplay: 0,
+          loop: 1,
+          playlist: "bP9gMpl1gyQ",
+          controls: 0,
+          showinfo: 0,
+          rel: 0,
+          modestbranding: 1,
+          disablekb: 1,
+          fs: 0
+        },
+        events: {
+          onReady: (event: any) => {
+            event.target.setVolume(10); // play softly (10% volume)
+            setYtPlayer(event.target);
+            if (hasInteractedRef.current) {
+              event.target.playVideo();
+              setIsPlaying(true);
+            }
+          },
+          onStateChange: (event: any) => {
+            if (event.data === (window as any).YT.PlayerState.PLAYING) {
+              setIsPlaying(true);
+            }
+          }
+        }
+      });
+    };
+
+    return () => {
+      (window as any).onYouTubeIframeAPIReady = null;
+    };
+  }, []);
+
+  const toggleAudio = () => {
+    if (!ytPlayer) return;
+    try {
+      if (isPlaying) {
+        ytPlayer.pauseVideo();
+        setIsPlaying(false);
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
+      } else {
+        ytPlayer.playVideo();
+        setIsPlaying(true);
+      }
+    } catch (err) {
+      console.error("Audio toggle interaction failed:", err);
+    }
+  };
 
   const { src: headshotSrc } = usePortfolioImage("profileHeadshot");
   const { src: eliteSrc } = usePortfolioImage("lifestyleElite");
@@ -70,15 +243,26 @@ export default function App() {
   ];
 
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 250);
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
   return (
     <div className="min-h-screen bg-[#050506] text-slate-300 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-x-hidden">
       
+
       {/* Background Ambient Glows from the Atmospheric Theme */}
       <div className="absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-cyan-900/20 blur-[120px] rounded-full pointer-events-none z-0"></div>
       <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-purple-900/20 blur-[120px] rounded-full pointer-events-none z-0"></div>
@@ -114,11 +298,11 @@ export default function App() {
               </div>
             </div>
             <div className="flex flex-col">
-              <div className="font-display font-bold text-sm tracking-wide text-white group-hover:text-cyan-400 transition-colors flex items-center gap-2">
-                <span className="w-2.5 h-2.5 bg-cyan-400 rounded-full shadow-[0_0_8px_#22d3ee] animate-pulse"></span>
+              <div className="font-display font-bold text-xs sm:text-sm tracking-wide text-white group-hover:text-cyan-400 transition-colors flex items-center gap-1.5 sm:gap-2">
+                <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-cyan-400 rounded-full shadow-[0_0_8px_#22d3ee] animate-pulse"></span>
                 Anthony Ullash Sarker
               </div>
-              <span className="text-[9px] uppercase tracking-[0.2em] text-cyan-400/80 font-mono">
+              <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.1em] sm:tracking-[0.2em] text-cyan-400/80 font-mono hidden sm:block">
                 System Architecture & AI Operations
               </span>
             </div>
@@ -147,8 +331,8 @@ export default function App() {
             })}
           </nav>
 
-          {/* Contact Direct CTA Header Button */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* Contact Direct CTA Header Button & Mobile Toggle */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <div className="hidden lg:flex gap-2">
               <div className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-[9px] uppercase tracking-wider text-slate-300 font-mono flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
@@ -159,13 +343,61 @@ export default function App() {
             <MagneticButton strength={15}>
               <button
                 onClick={() => scrollToSection("contact")}
-                className="px-4 py-2 rounded-xl bg-zinc-950/80 border border-white/10 hover:border-cyan-400 text-xs font-mono font-semibold text-white tracking-widest uppercase transition-all shadow-[0_0_10px_rgba(255,255,255,0.02)] cursor-pointer"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-zinc-950/80 border border-white/10 hover:border-cyan-400 text-[10px] sm:text-xs font-mono font-semibold text-white tracking-widest uppercase transition-all shadow-[0_0_10px_rgba(255,255,255,0.02)] cursor-pointer"
               >
                 Signal Link
               </button>
             </MagneticButton>
+
+            {/* Mobile Menu Toggle Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-xl border border-white/10 bg-zinc-950/80 hover:border-cyan-400 text-zinc-400 hover:text-white transition-all cursor-pointer shadow-md"
+              aria-label="Toggle navigation menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-4 h-4 text-cyan-400" />
+              ) : (
+                <Menu className="w-4 h-4" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="md:hidden w-full bg-[#050506]/95 backdrop-blur-md border-t border-white/5 overflow-hidden mt-4"
+            >
+              <nav className="flex flex-col gap-2 p-6">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeSection === item.id;
+                  
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollToSection(item.id)}
+                      className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-xs font-mono font-medium tracking-wider uppercase transition-all ${
+                        isActive 
+                          ? "bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.1)]" 
+                          : "text-zinc-400 hover:text-white border border-transparent"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Main Single Page Sections Container */}
@@ -249,7 +481,7 @@ export default function App() {
               transition={{ duration: 0.6, delay: 0.6 }}
               className="text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-sans"
             >
-              Blending technical development, creative visual asset design, and cutting-edge AI orchestration into high-performance digital environments.
+              Blending technical development, creative visual asset design, and cutting-edge AI orchestration into high-performance digital environments. Welcome to my secure portfolio portal.
             </motion.p>
 
             {/* Call To Actions */}
@@ -555,6 +787,43 @@ export default function App() {
         </div>
       </footer>
       <AdminDashboardModal />
+
+      {/* Hidden YouTube background audio player container */}
+      <div id="youtube-bg-player" className="fixed bottom-0 right-0 w-0 h-0 opacity-0 pointer-events-none z-[-1]" />
+
+      {/* Floating Audio Controller */}
+      {isLoaded && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.0, duration: 0.5 }}
+          className="fixed bottom-6 right-6 z-40"
+        >
+          <button
+            onClick={toggleAudio}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#050506]/85 backdrop-blur-md border border-white/10 hover:border-cyan-400 text-white shadow-xl transition-all cursor-pointer group hover:shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+            title={isPlaying ? "Pause Background Music" : "Play Background Music"}
+          >
+            {/* Visualizer bars or muted speaker */}
+            <div className="flex items-end gap-0.5 h-4 w-5 justify-center">
+              {isPlaying ? (
+                <>
+                  <span className="w-0.5 h-4 bg-cyan-400 rounded-full audio-bar audio-bar-1" />
+                  <span className="w-0.5 h-4 bg-purple-400 rounded-full audio-bar audio-bar-2" />
+                  <span className="w-0.5 h-4 bg-cyan-400 rounded-full audio-bar audio-bar-3" />
+                  <span className="w-0.5 h-4 bg-purple-400 rounded-full audio-bar audio-bar-4" />
+                </>
+              ) : (
+                <VolumeX className="w-3.5 h-3.5 text-zinc-500 group-hover:text-cyan-400 transition-colors" />
+              )}
+            </div>
+            
+            <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">
+              {isPlaying ? "Audio: On" : "Audio: Muted"}
+            </span>
+          </button>
+        </motion.div>
+      )}
     </div>
   );
 }

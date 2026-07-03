@@ -7,6 +7,17 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  position: relative;
+  background-color: #050506;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -87,3 +98,23 @@
   background: linear-gradient(to bottom, transparent, rgba(6, 182, 212, 0.5), transparent);
   animation: scan 6s linear infinite;
 }
+
+/* Audio wave visualizer animation */
+@keyframes audio-wave {
+  0%, 100% {
+    transform: scaleY(0.2);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.audio-bar {
+  animation: audio-wave 1.2s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.audio-bar-1 { animation-delay: 0.15s; }
+.audio-bar-2 { animation-delay: 0.45s; }
+.audio-bar-3 { animation-delay: 0.75s; }
+.audio-bar-4 { animation-delay: 0.3s; }

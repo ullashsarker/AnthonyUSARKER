@@ -149,7 +149,7 @@ export default function ParticleBackground() {
     <canvas
       id="particles-canvas"
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-auto opacity-70"
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-70"
     />
   );
 }
