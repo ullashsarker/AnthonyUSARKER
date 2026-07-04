@@ -156,12 +156,12 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0B0B1A] text-slate-300 font-sans selection:bg-purple-500/30 selection:text-purple-200 relative overflow-x-hidden">
+    <div className="min-h-screen bg-zinc-950 text-slate-300 font-sans selection:bg-purple-500/30 selection:text-purple-200 relative overflow-x-hidden">
 
       {/* Particles Background */}
       <div className="fixed inset-0 w-full h-screen overflow-hidden pointer-events-none z-0">
         <ParticleBackground />
-        <div className="absolute inset-0 bg-[#0B0B1A]/10" />
+        <div className="absolute inset-0 bg-zinc-950/10" />
       </div>
 
       {/* Ambient Glows */}
@@ -172,11 +172,21 @@ export default function App() {
       <Sidebar activeSection={activeSection} onNavigate={scrollToSection} />
 
       {/* Mobile Top Nav */}
-      <header className="mobile-top-nav fixed top-0 left-0 right-0 z-50 bg-[#0B0B1A]/90 backdrop-blur-xl border-b border-white/5 py-3 px-4">
+      <header className="mobile-top-nav fixed top-0 left-0 right-0 z-50 bg-zinc-950/90 backdrop-blur-xl border-b border-white/5 py-3 px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3" onClick={() => scrollToSection("hero")}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center">
-              <span className="font-display font-black text-sm text-white">A</span>
+            <div className="relative w-9 h-9 rounded-full border border-zinc-800 overflow-hidden shadow-lg flex items-center justify-center bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 shrink-0">
+              <span className="font-display font-bold text-xs text-white absolute">AU</span>
+              {headshotSrc && (
+                <img 
+                  src={headshotSrc} 
+                  alt="Anthony" 
+                  className="absolute inset-0 w-full h-full object-cover rounded-full"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              )}
             </div>
             <span className="font-display font-bold text-sm text-white">ANTHONY</span>
           </div>
@@ -213,7 +223,7 @@ export default function App() {
       {/* Main Content Area — offset by sidebar on desktop, offset by top nav on mobile */}
       <main className="lg:ml-[240px] relative z-10 pt-16 lg:pt-0">
         {/* Top Nav Bar (desktop only, inside content area) */}
-        <div className="hidden lg:flex items-center justify-between px-8 py-4 border-b border-white/5 bg-[#0B0B1A]/60 backdrop-blur-sm sticky top-0 z-30">
+        <div className="hidden lg:flex items-center justify-between px-8 py-4 border-b border-white/5 bg-zinc-950/60 backdrop-blur-sm sticky top-0 z-30">
           <nav className="flex items-center gap-1">
             {mobileNavItems.map((item) => (
               <button
@@ -255,7 +265,9 @@ export default function App() {
               transition={{ duration: 0.6 }}
               className="space-y-12"
             >
-              <div className="space-y-2">
+              <div className="relative space-y-2 pl-6">
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
                 <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Profile</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">About Me</h2>
               </div>
@@ -297,7 +309,9 @@ export default function App() {
           <section id="skills" className="py-20 border-t border-white/5">
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
-              <div className="space-y-2">
+              <div className="relative space-y-2 pl-6">
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
                 <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Capabilities</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Technical Arsenal</h2>
               </div>
@@ -309,7 +323,9 @@ export default function App() {
           <section id="experience" className="py-20 border-t border-white/5">
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
-              <div className="space-y-2">
+              <div className="relative space-y-2 pl-6">
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
                 <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Career</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Operational History</h2>
               </div>
@@ -321,8 +337,10 @@ export default function App() {
           <section id="projects" className="py-20 border-t border-white/5">
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
-              <div className="flex items-end justify-between">
-                <div className="space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div className="relative space-y-2 pl-6">
+                  <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
+                  <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
                   <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">My Work</span>
                   <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Featured Projects</h2>
                 </div>
@@ -349,7 +367,9 @@ export default function App() {
           <section id="lifestyle" className="py-20 border-t border-white/5">
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
-              <div className="space-y-2">
+              <div className="relative space-y-2 pl-6">
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
                 <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Expeditions</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">The Traveling Developer</h2>
               </div>
@@ -361,7 +381,9 @@ export default function App() {
           <section id="contact" className="py-20 border-t border-white/5 pb-32">
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
-              <div className="space-y-2">
+              <div className="relative space-y-2 pl-6">
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
                 <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Get In Touch</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Let's Work Together</h2>
               </div>
@@ -372,7 +394,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="lg:ml-[240px] border-t border-white/5 bg-[#0B0B1A]/90 py-8 relative z-10">
+      <footer className="lg:ml-[240px] border-t border-white/5 bg-zinc-950/90 py-8 relative z-10">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono uppercase tracking-wider">
           <div className="flex items-center gap-4">
             <span>© 2026 Anthony Ullash Sarker</span>
@@ -405,7 +427,7 @@ export default function App() {
           className="fixed bottom-6 right-6 z-40"
         >
           <button onClick={toggleAudio}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#0D0D20]/90 backdrop-blur-md border border-white/10 hover:border-purple-400/30 text-white shadow-xl transition-all cursor-pointer group"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-zinc-900/90 backdrop-blur-md border border-white/10 hover:border-purple-400/30 text-white shadow-xl transition-all cursor-pointer group"
             title={isPlaying ? "Pause Music" : "Play Music"}>
             <div className="flex items-end gap-0.5 h-4 w-5 justify-center">
               {isPlaying ? (

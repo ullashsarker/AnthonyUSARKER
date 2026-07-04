@@ -1,80 +1,65 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { 
-  BrainCircuit, 
-  Code2, 
-  Share2, 
-  Palette, 
-  ArrowRight, 
-  TrendingUp, 
-  Layers, 
-  Printer 
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import ServiceDetailModal from "./ServiceDetailModal";
+import ServiceIcon from "./ServiceIcon";
 
 const services = [
   {
     id: "ai-operations",
-    icon: BrainCircuit,
     title: "AI Operations",
     description: "Designing custom AI assistants, intelligent chatbots, and automated workflow scripts that drive results.",
-    color: "from-purple-500 to-indigo-500",
-    glowVar: "rgba(168, 85, 247, 0.08)",
+    color: "from-purple-500 to-cyan-400",
+    glowVar: "rgba(142, 114, 238, 0.1)",
     iconBg: "bg-purple-500/15 text-purple-400",
   },
   {
     id: "web-dev",
-    icon: Code2,
     title: "Web Development",
     description: "Building fast, responsive and modern websites with clean code and cutting-edge frameworks.",
-    color: "from-blue-500 to-indigo-500",
-    glowVar: "rgba(59, 130, 246, 0.08)",
-    iconBg: "bg-blue-500/15 text-blue-400",
-  },
-  {
-    id: "pinterest-marketing",
-    icon: Share2,
-    title: "Pinterest Marketing",
-    description: "Crafting viral pin strategies and automated content funnels that stand out from the crowd.",
-    color: "from-pink-500 to-rose-500",
-    glowVar: "rgba(236, 72, 153, 0.08)",
-    iconBg: "bg-pink-500/15 text-pink-400",
-  },
-  {
-    id: "digital-marketing",
-    icon: TrendingUp,
-    title: "Digital Marketing",
-    description: "Driving targeted traffic, generating warm leads, and scaling conversions with ROI-focused funnels.",
-    color: "from-emerald-500 to-teal-500",
-    glowVar: "rgba(16, 185, 129, 0.08)",
-    iconBg: "bg-emerald-500/15 text-emerald-400",
-  },
-  {
-    id: "ui-ux-design",
-    icon: Layers,
-    title: "UI/UX Designing",
-    description: "Designing beautiful, user-centric interfaces and interactive prototypes that engage and convert.",
-    color: "from-cyan-500 to-blue-500",
-    glowVar: "rgba(6, 182, 212, 0.08)",
+    color: "from-cyan-500 to-purple-500",
+    glowVar: "rgba(0, 215, 210, 0.1)",
     iconBg: "bg-cyan-500/15 text-cyan-400",
   },
   {
+    id: "pinterest-marketing",
+    title: "Pinterest Marketing",
+    description: "Crafting viral pin strategies and automated content funnels that stand out from the crowd.",
+    color: "from-purple-500 to-indigo-500",
+    glowVar: "rgba(142, 114, 238, 0.1)",
+    iconBg: "bg-purple-500/15 text-purple-400",
+  },
+  {
+    id: "digital-marketing",
+    title: "Digital Marketing",
+    description: "Driving targeted traffic, generating warm leads, and scaling conversions with ROI-focused funnels.",
+    color: "from-cyan-400 to-indigo-600",
+    glowVar: "rgba(0, 215, 210, 0.1)",
+    iconBg: "bg-cyan-500/15 text-cyan-400",
+  },
+  {
+    id: "ui-ux-design",
+    title: "UI/UX Designing",
+    description: "Designing beautiful, user-centric interfaces and interactive prototypes that engage and convert.",
+    color: "from-purple-600 to-cyan-400",
+    glowVar: "rgba(142, 114, 238, 0.1)",
+    iconBg: "bg-purple-500/15 text-purple-400",
+  },
+  {
     id: "print-design",
-    icon: Printer,
     title: "Print Design",
     description: "Crafting tangible, high-impact marketing materials that elevate your offline brand presence.",
-    color: "from-amber-500 to-orange-500",
-    glowVar: "rgba(245, 158, 11, 0.08)",
-    iconBg: "bg-amber-500/15 text-amber-400",
+    color: "from-cyan-500 to-indigo-500",
+    glowVar: "rgba(0, 215, 210, 0.1)",
+    iconBg: "bg-cyan-500/15 text-cyan-400",
   },
   {
     id: "brand-identity",
-    icon: Palette,
     title: "Brand Identity",
     description: "Creating memorable brand identities, custom logos, and guidelines that set your business apart.",
-    color: "from-rose-500 to-purple-500",
-    glowVar: "rgba(244, 63, 94, 0.08)",
-    iconBg: "bg-rose-500/15 text-rose-400",
+    color: "from-purple-500 to-cyan-500",
+    glowVar: "rgba(142, 114, 238, 0.1)",
+    iconBg: "bg-purple-500/15 text-purple-400",
   },
 ];
 
@@ -91,7 +76,12 @@ export default function ServicesSection() {
         className="space-y-12"
       >
         {/* Header */}
-        <div className="space-y-2">
+        <div className="relative space-y-2 pl-6">
+          {/* Glowing gradient vertical bar */}
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
+          {/* Subtle glow spot */}
+          <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
+          
           <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">
             What I Do
           </span>
@@ -103,7 +93,6 @@ export default function ServicesSection() {
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => {
-            const Icon = service.icon;
             return (
               <motion.div
                 key={service.title}
@@ -118,7 +107,7 @@ export default function ServicesSection() {
                 <div className="relative z-10 space-y-4">
                   {/* Icon */}
                   <div className={`w-14 h-14 rounded-2xl ${service.iconBg} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
-                    <Icon className="w-6 h-6" />
+                    <ServiceIcon id={service.id} className="w-6 h-6" />
                   </div>
 
                   {/* Title */}

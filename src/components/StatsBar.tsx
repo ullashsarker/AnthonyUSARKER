@@ -68,7 +68,7 @@ export default function StatsBar() {
       transition={{ duration: 0.6 }}
       className="w-full rounded-2xl stats-gradient-bar p-[1px] my-4"
     >
-      <div className="w-full rounded-2xl bg-[#0B0B1A]/90 backdrop-blur-sm py-8 px-4 sm:px-8">
+      <div className="w-full rounded-2xl bg-zinc-950/90 backdrop-blur-sm py-8 px-4 sm:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, index) => {
             const Icon = stat.icon;

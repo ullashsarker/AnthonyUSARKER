@@ -12,7 +12,8 @@ import {
   Image as ImageIcon,
   Upload,
   RotateCcw,
-  AlertTriangle
+  AlertTriangle,
+  FileText
 } from 'lucide-react';
 import { 
   IMAGE_MAPPING, 
@@ -39,12 +40,13 @@ export default function AdminDashboardModal() {
   const [passcodeError, setPasscodeError] = useState<string | null>(null);
 
   const [messages, setMessages] = useState<ContactMessage[]>([]);
-  const [consoleLogs, setConsoleLogs] = useState<string[]>(['[SYSTEM] Admin console initialized.']);
+  const [consoleLogs, setConsoleLogs] = useState<string[]>(['[SYSTEM] Control panel initialized.']);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'transmissions' | 'assets'>('transmissions');
   const [uploadingKeys, setUploadingKeys] = useState<Record<string, boolean>>({});
   const [previewImages, setPreviewImages] = useState<Record<string, string>>({});
+  const [isUploadingCV, setIsUploadingCV] = useState(false);
 
   // Append logs helper
   const addLog = (text: string) => {
@@ -94,14 +96,14 @@ export default function AdminDashboardModal() {
       if (response.ok) {
         setIsAuthenticated(true);
         sessionStorage.setItem('admin_passcode', codeToVerify);
-        addLog('[AUTH] Cryptographic signature verified. Access granted.');
+        addLog('[AUTH] Authentication successful. Access granted.');
       } else {
-        setPasscodeError('Access Denied. Invalid passcode signature.');
+        setPasscodeError('Access Denied. Invalid passcode.');
         sessionStorage.removeItem('admin_passcode');
       }
     } catch (err) {
       console.error(err);
-      setPasscodeError('Authentication node offline. Verify backend connection.');
+      setPasscodeError('Connection failed. Please check backend server.');
     } finally {
       setIsVerifying(false);
     }
@@ -120,13 +122,13 @@ export default function AdminDashboardModal() {
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
-        addLog(`[SERVER] Fetched ${data.length} transmissions from incoming log.`);
+        addLog(`[SERVER] Fetched ${data.length} message logs.`);
       } else {
-        addLog('[SERVER] [ERROR] Failed to fetch transmissions.');
+        addLog('[SERVER] [ERROR] Failed to fetch message logs.');
       }
     } catch (err) {
       console.error(err);
-      addLog('[SYSTEM] [ERROR] Message link timed out.');
+      addLog('[SYSTEM] [ERROR] Message fetch connection timed out.');
     } finally {
       setIsLoadingMessages(false);
     }
@@ -142,9 +144,9 @@ export default function AdminDashboardModal() {
 
       if (response.ok) {
         setMessages(prev => prev.filter(m => m.id !== id));
-        addLog(`[PURGE] Purged transmission record: ID ${id}`);
+        addLog(`[PURGE] Deleted message: ID ${id}`);
       } else {
-        addLog(`[ERROR] Server rejected transmission purge: ID ${id}`);
+        addLog(`[ERROR] Server failed to delete message: ID ${id}`);
       }
     } catch (err) {
       console.error(err);
@@ -153,7 +155,7 @@ export default function AdminDashboardModal() {
   };
 
   const handlePurgeAllMessages = async () => {
-    if (!confirm('Are you sure you want to purge all transmission logs from the server? This is irreversible.')) return;
+    if (!confirm('Are you sure you want to delete all messages from the server? This is irreversible.')) return;
     
     const cachedPasscode = sessionStorage.getItem('admin_passcode') || passcode;
     try {
@@ -164,13 +166,13 @@ export default function AdminDashboardModal() {
 
       if (response.ok) {
         setMessages([]);
-        addLog('[PURGE] Cleared entire database transmission history.');
+        addLog('[PURGE] Cleared all messages.');
       } else {
-        addLog('[ERROR] Server rejected full log database purge.');
+        addLog('[ERROR] Server failed to clear messages.');
       }
     } catch (err) {
       console.error(err);
-      addLog('[ERROR] Connection exception during full database purge.');
+      addLog('[ERROR] Connection exception during clear.');
     }
   };
 
@@ -178,7 +180,7 @@ export default function AdminDashboardModal() {
     setIsAuthenticated(false);
     setPasscode('');
     sessionStorage.removeItem('admin_passcode');
-    setConsoleLogs(['[SYSTEM] Session terminated. Initializing fresh node.']);
+    setConsoleLogs(['[SYSTEM] Session logged out.']);
   };
 
   const handleClose = () => {
@@ -244,6 +246,61 @@ export default function AdminDashboardModal() {
     reader.readAsDataURL(file);
   };
 
+  const handleCVChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const allowedExtensions = ['.pdf', '.docx', '.doc'];
+    const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    if (!allowedExtensions.includes(ext)) {
+      addLog(`[ASSETS] [ERROR] Invalid CV format. Please upload a PDF or Word document (.docx, .doc).`);
+      alert('Invalid CV format. Please upload a PDF or Word document (.docx, .doc).');
+      return;
+    }
+
+    setIsUploadingCV(true);
+    addLog(`[ASSETS] Preparing CV upload: ${file.name}...`);
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result as string;
+      const currentPasscode = sessionStorage.getItem('admin_passcode') || passcode;
+      
+      try {
+        addLog(`[ASSETS] Syncing CV file "anthony_cv${ext}" to server...`);
+        const response = await fetch('/api/save-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Admin-Passcode': currentPasscode,
+          },
+          body: JSON.stringify({
+            filename: `anthony_cv${ext}`,
+            base64: base64,
+          }),
+        });
+
+        if (response.ok) {
+          addLog(`[ASSETS] Successfully uploaded CV file: anthony_cv${ext}`);
+          alert(`CV uploaded successfully as anthony_cv${ext}!`);
+        } else {
+          addLog(`[ASSETS] [ERROR] Server rejected CV file upload.`);
+          alert('Failed to sync CV to server.');
+        }
+      } catch (err) {
+        console.error(err);
+        addLog(`[ASSETS] [ERROR] Exception during CV sync.`);
+      } finally {
+        setIsUploadingCV(false);
+      }
+    };
+    reader.onerror = () => {
+      addLog(`[ASSETS] [ERROR] Failed to read CV file.`);
+      setIsUploadingCV(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleResetImage = async (key: ImageKey) => {
     if (!confirm(`Are you sure you want to reset ${IMAGE_MAPPING[key].label} to its default image?`)) return;
     try {
@@ -262,34 +319,34 @@ export default function AdminDashboardModal() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
           {/* Backdrop */}
           <div className="absolute inset-0" onClick={handleClose} />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            initial={{ opacity: 0, scale: 0.96, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 15 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-            className="relative w-full max-w-4xl bg-[#09090b]/95 border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.9)] max-h-[85vh] flex flex-col z-10 font-sans"
+            exit={{ opacity: 0, scale: 0.96, y: 12 }}
+            transition={{ type: 'spring', damping: 24, stiffness: 320 }}
+            className="relative w-full max-w-4xl bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl max-h-[85vh] flex flex-col z-10 font-sans"
           >
             {/* Header */}
-            <div className="p-5 border-b border-white/10 flex items-center justify-between bg-zinc-900/20">
+            <div className="p-5 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/10">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-tr from-cyan-600 to-purple-600 rounded-lg text-white">
-                  <Terminal className="w-4 h-4" />
+                <div className="p-2 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-lg text-white">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>
                   <h2 className="text-sm font-mono font-bold tracking-wider text-white uppercase flex items-center gap-2">
-                    System Operations Terminal
+                    Admin Control Panel
                     {isAuthenticated && (
-                      <span className="text-[10px] text-cyan-400 bg-cyan-950/40 border border-cyan-500/20 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] text-indigo-400 bg-indigo-950/40 border border-indigo-500/20 px-2 py-0.5 rounded-full font-bold">
                         ACTIVE_SESSION
                       </span>
                     )}
                   </h2>
-                  <p className="text-[10px] text-zinc-500 font-mono tracking-wide uppercase">
-                    {isAuthenticated ? 'Communications Inbox & Decryption Panel' : 'Decryption authentication required'}
+                  <p className="text-[10px] text-zinc-400 font-mono tracking-wide uppercase">
+                    {isAuthenticated ? 'Manage Inquiries & Assets' : 'Admin authentication required'}
                   </p>
                 </div>
               </div>
@@ -304,28 +361,28 @@ export default function AdminDashboardModal() {
             {/* Content Area */}
             <div className="flex-1 min-h-[350px] flex flex-col min-h-0">
               {isAuthenticated && (
-                <div className="flex border-b border-white/10 px-6 bg-zinc-950/30 shrink-0">
+                <div className="flex border-b border-zinc-800 px-6 bg-zinc-900/10 shrink-0">
                   <button
                     onClick={() => setActiveTab('transmissions')}
                     className={`py-3 px-4 font-mono text-xs font-semibold uppercase tracking-wider border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                       activeTab === 'transmissions'
-                        ? 'border-cyan-500 text-cyan-400'
+                        ? 'border-indigo-500 text-indigo-400'
                         : 'border-transparent text-zinc-400 hover:text-white'
                     }`}
                   >
                     <Mail className="w-4 h-4" />
-                    Transmissions Log ({messages.length}/500)
+                    Inquiries Log ({messages.length})
                   </button>
                   <button
                     onClick={() => setActiveTab('assets')}
                     className={`py-3 px-4 font-mono text-xs font-semibold uppercase tracking-wider border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                       activeTab === 'assets'
-                        ? 'border-purple-500 text-purple-400'
+                        ? 'border-indigo-500 text-indigo-400'
                         : 'border-transparent text-zinc-400 hover:text-white'
                     }`}
                   >
                     <ImageIcon className="w-4 h-4" />
-                    System Assets
+                    Assets Manager
                   </button>
                 </div>
               )}
@@ -334,17 +391,16 @@ export default function AdminDashboardModal() {
                 {!isAuthenticated ? (
                   /* AUTHENTICATION FORM SCREEN */
                   <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-6 max-w-sm mx-auto">
-                    <div className="p-4 bg-zinc-900/40 border border-white/5 rounded-full relative group">
-                      <KeyRound className="w-10 h-10 text-cyan-500 animate-pulse" />
-                      <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-md pointer-events-none" />
+                    <div className="p-4 bg-zinc-900/40 border border-zinc-800 rounded-full relative group">
+                      <KeyRound className="w-10 h-10 text-indigo-400" />
                     </div>
                     
                     <div className="space-y-2">
                       <h3 className="font-mono text-xs font-bold tracking-widest text-white uppercase">
-                        ENTER ENCRYPTION PASSCODE
+                        ENTER ACCESS PASSCODE
                       </h3>
                       <p className="text-[11px] text-zinc-400 font-sans leading-normal">
-                        Authentication required to access communication transmissions.
+                        Authentication required to access control panel resources.
                       </p>
                     </div>
 
@@ -358,7 +414,7 @@ export default function AdminDashboardModal() {
                           value={passcode}
                           onChange={(e) => setPasscode(e.target.value)}
                           placeholder="••••••••"
-                          className="w-full px-4 py-3 bg-zinc-950/80 rounded-xl border border-white/5 focus:border-cyan-500/40 focus:outline-none text-sm text-cyan-400 tracking-widest text-center font-mono placeholder-zinc-700"
+                          className="w-full px-4 py-3 bg-zinc-900/50 rounded-xl border border-zinc-800 focus:border-indigo-500/40 focus:outline-none text-sm text-indigo-400 tracking-widest text-center font-mono placeholder-zinc-700"
                           autoFocus
                         />
                       </div>
@@ -373,7 +429,7 @@ export default function AdminDashboardModal() {
                       <button
                         type="submit"
                         disabled={isVerifying}
-                        className="w-full py-3 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-mono text-xs font-bold tracking-widest uppercase rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.25)] flex items-center justify-center gap-2"
+                        className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-mono text-xs font-bold tracking-widest uppercase rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
                       >
                         {isVerifying ? (
                           <>
@@ -383,7 +439,7 @@ export default function AdminDashboardModal() {
                         ) : (
                           <>
                             <ShieldCheck className="w-4 h-4" />
-                            ESTABLISH LINK
+                            LOG IN
                           </>
                         )}
                       </button>
@@ -396,22 +452,22 @@ export default function AdminDashboardModal() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                           <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                            Transmissions Database
-                            <span className="text-[9px] text-cyan-400 bg-cyan-950/40 border border-cyan-500/20 px-2 py-0.5 rounded-full font-mono">
-                              {messages.length} / 500 signals stored
+                            Inquiries Database
+                            <span className="text-[9px] text-indigo-400 bg-indigo-950/40 border border-indigo-500/20 px-2 py-0.5 rounded-full font-mono">
+                              {messages.length} messages stored
                             </span>
                           </h3>
-                          <p className="text-[10px] text-zinc-500 font-mono uppercase mt-0.5">Read secure message signals received from public contact forms</p>
+                          <p className="text-[10px] text-zinc-500 font-mono uppercase mt-0.5">Read messages received from your portfolio contact form</p>
                         </div>
                         
                         <div className="flex items-center gap-3">
                           <button
                             onClick={loadMessages}
                             disabled={isLoadingMessages}
-                            className="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[10px] font-mono rounded border border-white/5 transition-colors cursor-pointer flex items-center gap-1.5"
+                            className="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[10px] font-mono rounded border border-zinc-800 transition-colors cursor-pointer flex items-center gap-1.5"
                           >
                             <RefreshCw className={`w-3.5 h-3.5 ${isLoadingMessages ? 'animate-spin' : ''}`} />
-                            SYNC
+                            REFRESH
                           </button>
                           
                           {messages.length > 0 && (
@@ -420,15 +476,15 @@ export default function AdminDashboardModal() {
                               className="px-2.5 py-1.5 bg-red-950/20 hover:bg-red-950/40 text-red-400 text-[10px] font-mono rounded border border-red-500/20 transition-colors cursor-pointer flex items-center gap-1.5"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                              PURGE ALL
+                              DELETE ALL
                             </button>
                           )}
 
                           <button
                             onClick={handleLogout}
-                            className="px-2.5 py-1.5 bg-zinc-950 hover:bg-red-950/30 text-zinc-400 hover:text-red-400 text-[10px] font-mono rounded border border-white/5 hover:border-red-500/20 transition-colors cursor-pointer"
+                            className="px-2.5 py-1.5 bg-zinc-900 hover:bg-red-950/20 text-zinc-400 hover:text-red-400 text-[10px] font-mono rounded border border-zinc-800 transition-colors cursor-pointer"
                           >
-                            DISCONNECT
+                            LOG OUT
                           </button>
                         </div>
                       </div>
@@ -437,27 +493,27 @@ export default function AdminDashboardModal() {
                       <div className="flex-1 overflow-y-auto space-y-4 max-h-[500px] pr-2">
                         {isLoadingMessages ? (
                           <div className="flex flex-col items-center justify-center py-12 text-center text-zinc-500 space-y-2">
-                            <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-                            <span className="font-mono text-xs uppercase tracking-widest">establishing link...</span>
+                            <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                            <span className="font-mono text-xs uppercase tracking-widest">loading messages...</span>
                           </div>
                         ) : messages.length === 0 ? (
-                          <div className="py-16 text-center border border-dashed border-white/5 rounded-xl bg-zinc-950/20 flex flex-col items-center justify-center space-y-2">
-                            <Mail className="w-8 h-8 text-zinc-600 animate-pulse" />
-                            <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">[NO INCOMING SIGNALS DETECTED]</span>
+                          <div className="py-16 text-center border border-dashed border-zinc-800 rounded-xl bg-zinc-900/10 flex flex-col items-center justify-center space-y-2">
+                            <Mail className="w-8 h-8 text-zinc-700 animate-pulse" />
+                            <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">[NO INCOMING MESSAGES]</span>
                           </div>
                         ) : (
                           messages.map((msg) => (
                             <div 
                               key={msg.id}
-                              className="p-4 rounded-xl border border-white/5 bg-zinc-950/50 hover:bg-zinc-950/80 transition-colors relative group/msg space-y-3"
+                              className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/20 hover:bg-zinc-900/35 transition-colors relative group/msg space-y-3"
                             >
-                              <div className="flex items-start justify-between gap-4 pb-2.5 border-b border-white/5">
+                              <div className="flex items-start justify-between gap-4 pb-2.5 border-b border-zinc-800">
                                 <div className="space-y-1">
                                   <div className="flex items-center gap-2">
                                     <span className="text-[11px] font-mono font-bold text-white uppercase tracking-wide">{msg.name}</span>
                                     <span className="text-[9px] font-mono text-zinc-500">({msg.email})</span>
                                   </div>
-                                  <div className="text-[9px] text-cyan-400/80 font-mono uppercase tracking-wider">
+                                  <div className="text-[9px] text-indigo-400/80 font-mono uppercase tracking-wider">
                                     ID: {msg.id} // TS: {new Date(msg.timestamp).toLocaleString()}
                                   </div>
                                 </div>
@@ -465,12 +521,12 @@ export default function AdminDashboardModal() {
                                 <button
                                   onClick={() => handleDeleteMessage(msg.id)}
                                   className="p-1.5 rounded-lg hover:bg-red-500/10 text-zinc-500 hover:text-red-400 transition-colors cursor-pointer"
-                                  title="Purge record"
+                                  title="Delete message"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                               </div>
-                              <p className="text-[12px] text-zinc-300 font-sans leading-relaxed whitespace-pre-wrap pl-1 border-l-2 border-cyan-500/30">
+                              <p className="text-[12px] text-zinc-300 font-sans leading-relaxed whitespace-pre-wrap pl-1 border-l-2 border-indigo-500/30">
                                 {msg.message}
                               </p>
                             </div>
@@ -481,12 +537,42 @@ export default function AdminDashboardModal() {
                   </div>
                 ) : (
                   /* AUTHENTICATED SYSTEM DASHBOARD SCREEN - ASSETS REGISTRY */
-                  <div className="flex-1 p-6 flex flex-col min-h-0">
+                  <div className="flex-1 p-6 flex flex-col min-h-0 space-y-5">
+                    
+                    {/* CV Document Upload Banner Card */}
+                    <div className="p-4 rounded-xl border border-indigo-500/20 bg-indigo-950/10 hover:bg-indigo-950/20 transition-colors flex flex-col sm:flex-row gap-4 items-center shrink-0">
+                      <div className="relative w-12 h-12 rounded-lg border border-indigo-500/30 bg-indigo-500/10 flex items-center justify-center shrink-0">
+                        <FileText className="w-6 h-6 text-indigo-400" />
+                        {isUploadingCV && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-lg">
+                            <RefreshCw className="w-4 h-4 text-indigo-400 animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 text-center sm:text-left space-y-1">
+                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">Curriculum Vitae (CV) Document</h4>
+                        <p className="text-[10px] text-zinc-400 font-mono">Upload a PDF or Word document (.docx, .doc) for visitors to download</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <label className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 uppercase font-bold select-none shadow-[0_0_10px_rgba(79,70,229,0.2)]">
+                          <Upload className="w-3.5 h-3.5" />
+                          Upload CV
+                          <input 
+                            type="file" 
+                            accept=".pdf,.docx,.doc" 
+                            className="hidden" 
+                            onChange={handleCVChange}
+                            disabled={isUploadingCV}
+                          />
+                        </label>
+                      </div>
+                    </div>
+
                     <div className="flex-1 flex flex-col space-y-4 min-h-0">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                          <h3 className="text-sm font-semibold text-white">System Assets Registry</h3>
-                          <p className="text-[10px] text-zinc-500 font-mono uppercase mt-0.5">Upload custom images to persist across DB and server filesystems</p>
+                          <h3 className="text-sm font-semibold text-white">Media Assets Registry</h3>
+                          <p className="text-[10px] text-zinc-500 font-mono uppercase mt-0.5">Upload custom images to update your portfolio sections</p>
                         </div>
                         
                         <div className="flex items-center gap-3">
@@ -497,7 +583,7 @@ export default function AdminDashboardModal() {
                               await syncImagesToFilesystem(currentPasscode);
                               addLog(`[ASSETS] Sync operation complete.`);
                             }}
-                            className="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[10px] font-mono rounded border border-white/5 transition-colors cursor-pointer flex items-center gap-1.5"
+                            className="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[10px] font-mono rounded border border-zinc-800 transition-colors cursor-pointer flex items-center gap-1.5"
                           >
                             <RefreshCw className="w-3.5 h-3.5" />
                             SYNC ALL
@@ -505,15 +591,15 @@ export default function AdminDashboardModal() {
 
                           <button
                             onClick={handleLogout}
-                            className="px-2.5 py-1.5 bg-zinc-950 hover:bg-red-950/30 text-zinc-400 hover:text-red-400 text-[10px] font-mono rounded border border-white/5 hover:border-red-500/20 transition-colors cursor-pointer"
+                            className="px-2.5 py-1.5 bg-zinc-900 hover:bg-red-950/20 text-zinc-400 hover:text-red-400 text-[10px] font-mono rounded border border-zinc-800 transition-colors cursor-pointer"
                           >
-                            DISCONNECT
+                            LOG OUT
                           </button>
                         </div>
                       </div>
 
                       {/* Assets Grid */}
-                      <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] pr-2">
+                      <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[380px] pr-2">
                         {(Object.keys(IMAGE_MAPPING) as ImageKey[]).map((key) => {
                           const mapping = IMAGE_MAPPING[key];
                           const preview = previewImages[key];
@@ -522,10 +608,10 @@ export default function AdminDashboardModal() {
                           return (
                             <div 
                               key={key}
-                              className="p-4 rounded-xl border border-white/5 bg-zinc-950/50 hover:bg-zinc-950/80 transition-colors flex gap-4 items-center"
+                              className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/20 hover:bg-zinc-900/35 transition-colors flex gap-4 items-center"
                             >
                               {/* Preview Thumbnail */}
-                              <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-white/10 bg-zinc-900 shrink-0 bg-zinc-950 flex items-center justify-center">
+                              <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900 shrink-0 flex items-center justify-center">
                                 {preview ? (
                                   <img 
                                     src={preview} 
@@ -538,7 +624,7 @@ export default function AdminDashboardModal() {
                                 
                                 {isUploading && (
                                   <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-                                    <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                                    <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
                                   </div>
                                 )}
                               </div>
@@ -551,7 +637,7 @@ export default function AdminDashboardModal() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                  <label className="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[9px] font-mono rounded border border-white/5 hover:border-cyan-500/20 transition-all cursor-pointer flex items-center gap-1 uppercase select-none">
+                                  <label className="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[9px] font-mono rounded border border-zinc-800 hover:border-indigo-500/20 transition-all cursor-pointer flex items-center gap-1 uppercase select-none">
                                     <Upload className="w-3 h-3" />
                                     UPLOAD
                                     <input 
@@ -565,7 +651,7 @@ export default function AdminDashboardModal() {
 
                                   <button
                                     onClick={() => handleResetImage(key)}
-                                    className="px-2 py-1 bg-zinc-950 hover:bg-red-950/20 text-zinc-400 hover:text-red-400 text-[9px] font-mono rounded border border-white/5 hover:border-red-500/10 transition-all cursor-pointer flex items-center gap-1 uppercase"
+                                    className="px-2 py-1 bg-zinc-900 hover:bg-red-950/10 text-zinc-400 hover:text-red-400 text-[9px] font-mono rounded border border-zinc-800 hover:border-red-500/10 transition-all cursor-pointer flex items-center gap-1 uppercase"
                                   >
                                     <RotateCcw className="w-3 h-3" />
                                     RESET
@@ -583,28 +669,28 @@ export default function AdminDashboardModal() {
             </div>
 
             {/* Terminal Console Log Output Footer */}
-            <div className="border-t border-white/10 p-3 bg-black flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shrink-0 font-mono">
+            <div className="border-t border-zinc-800 p-3 bg-[#0a0a0d] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shrink-0 font-mono">
               {/* Console log list (stacked logs) */}
-              <div className="flex-1 text-[9px] text-emerald-400/80 h-10 overflow-y-auto select-none bg-zinc-950/60 p-1.5 rounded border border-white/5 leading-normal uppercase">
+              <div className="flex-1 text-[9px] text-zinc-400 h-10 overflow-y-auto select-none bg-zinc-950 p-1.5 rounded border border-zinc-800 leading-normal uppercase">
                 {consoleLogs.map((log, i) => (
                   <div key={i} className="truncate">{log}</div>
                 ))}
               </div>
               
               <div className="flex items-center justify-between md:justify-end gap-6 text-[9px] uppercase tracking-widest text-zinc-500 shrink-0">
-                <span className="text-cyan-500 flex items-center gap-1.5 font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
-                  SECURE_NODE
+                <span className="text-indigo-400 flex items-center gap-1.5 font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                  ADMIN_SESSION
                 </span>
                 {isAuthenticated && (
                   <button
                     onClick={handleLogout}
                     className="md:hidden py-1 px-3 bg-red-950/30 hover:bg-red-950/50 text-red-400 rounded border border-red-500/20 transition-all cursor-pointer font-bold"
                   >
-                    DISCONNECT
+                    LOG OUT
                   </button>
                 )}
-                <span>OPERATOR: SARKER.AU</span>
+                <span>ADMIN: SARKER.AU</span>
               </div>
             </div>
 

@@ -1,6 +1,8 @@
 import { motion } from "motion/react";
 import { Home, User, Briefcase, FolderOpen, Code2, Compass, Mail, ArrowRight, Download, Facebook, Instagram, Github, Linkedin } from "lucide-react";
 
+import { usePortfolioImage } from "../lib/imageStorage";
+
 interface SidebarProps {
   activeSection: string;
   onNavigate: (id: string) => void;
@@ -17,13 +19,25 @@ const navItems = [
 ];
 
 export default function Sidebar({ activeSection, onNavigate }: SidebarProps) {
+  const { src: logoSrc } = usePortfolioImage("profileHeadshot");
+
   return (
-    <aside className="sidebar-desktop fixed left-0 top-0 bottom-0 w-[240px] bg-[#0D0D20]/95 backdrop-blur-xl border-r border-white/5 z-50 flex flex-col justify-between py-6 px-4 overflow-y-auto no-scrollbar">
+    <aside className="sidebar-desktop fixed left-0 top-0 bottom-0 w-[240px] bg-zinc-950/95 backdrop-blur-xl border-r border-zinc-800 z-50 flex flex-col justify-between py-6 px-4 overflow-y-auto no-scrollbar">
       {/* Logo */}
       <div className="space-y-8">
         <div className="flex items-center gap-3 px-2 cursor-pointer" onClick={() => onNavigate("hero")}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg">
-            <span className="font-display font-black text-sm text-white">A</span>
+          <div className="relative w-10 h-10 rounded-full border border-zinc-800 overflow-hidden shadow-lg flex items-center justify-center bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 shrink-0">
+            <span className="font-display font-bold text-xs text-white absolute">AU</span>
+            {logoSrc && (
+              <img 
+                src={logoSrc} 
+                alt="Anthony" 
+                className="absolute inset-0 w-full h-full object-cover rounded-full"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            )}
           </div>
           <div>
             <h3 className="font-display font-bold text-sm text-white leading-tight">ANTHONY</h3>
@@ -69,7 +83,7 @@ export default function Sidebar({ activeSection, onNavigate }: SidebarProps) {
       {/* Bottom Section */}
       <div className="space-y-4 mt-4">
         {/* Download CV */}
-        <a href="/anthony_suit.png" download="Anthony_CV.pdf" className="flex items-center gap-2 px-3 py-2 text-xs text-slate-400 hover:text-white transition-colors">
+        <a href="/api/download-cv" className="flex items-center gap-2 px-3 py-2 text-xs text-slate-400 hover:text-white transition-colors">
           <Download className="w-4 h-4" />
           <span>Download CV</span>
         </a>

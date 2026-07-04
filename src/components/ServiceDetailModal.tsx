@@ -7,19 +7,13 @@ import {
   Sparkles, 
   Clock, 
   ShieldCheck, 
-  Zap, 
-  BrainCircuit, 
-  Code2, 
-  Share2, 
-  Palette, 
-  TrendingUp, 
-  Layers, 
-  Printer 
+  Zap 
 } from 'lucide-react';
+import ServiceIcon from './ServiceIcon';
 
 export interface ServiceDetail {
   id: string;
-  icon: React.ComponentType<any>;
+  icon?: React.ComponentType<any>;
   title: string;
   category: string;
   shortDesc: string;
@@ -281,17 +275,17 @@ export default function ServiceDetailModal({ selectedServiceId, onClose }: Servi
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-            className="relative w-full max-w-4xl bg-[#09090b]/95 border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] z-10 flex flex-col max-h-[90vh] font-sans"
+            className="relative w-full max-w-4xl bg-zinc-950/95 border border-zinc-800 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] z-10 flex flex-col max-h-[90vh] font-sans"
             style={{ "--card-glow": service.glowVar } as React.CSSProperties}
           >
             {/* Ambient Card Glow Effect */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,var(--card-glow),transparent_60%)] pointer-events-none" />
 
             {/* Header */}
-            <div className="p-5 sm:p-6 border-b border-white/10 flex items-center justify-between bg-zinc-900/20 relative z-10">
+            <div className="p-5 sm:p-6 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/20 relative z-10">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl ${service.iconBg} flex items-center justify-center`}>
-                  <service.icon className="w-5 h-5" />
+                  <ServiceIcon id={service.id} className="w-5 h-5" />
                 </div>
                 <div>
                   <span className="text-[9px] font-mono font-bold tracking-widest text-purple-400 uppercase">
@@ -304,7 +298,7 @@ export default function ServiceDetailModal({ selectedServiceId, onClose }: Servi
               </div>
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl hover:bg-white/5 text-zinc-400 hover:text-white transition-colors cursor-pointer border border-transparent hover:border-white/5"
+                className="p-2 rounded-xl hover:bg-white/5 text-zinc-400 hover:text-white transition-colors cursor-pointer border border-transparent hover:border-zinc-800"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -329,7 +323,7 @@ export default function ServiceDetailModal({ selectedServiceId, onClose }: Servi
                   {/* Highlights Bullet Badges */}
                   <div className="flex flex-wrap gap-2 pt-2">
                     {service.highlights.map((highlight, idx) => (
-                      <span key={idx} className="px-3 py-1 text-[10px] font-mono bg-white/[0.02] border border-white/5 text-slate-300 rounded-full flex items-center gap-1.5">
+                      <span key={idx} className="px-3 py-1 text-[10px] font-mono bg-white/[0.02] border border-zinc-800/60 text-slate-300 rounded-full flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                         {highlight}
                       </span>
@@ -338,7 +332,7 @@ export default function ServiceDetailModal({ selectedServiceId, onClose }: Servi
                 </div>
 
                 {/* Right Package details Side */}
-                <div className="md:col-span-5 p-5 rounded-2xl bg-zinc-950/80 border border-white/10 relative overflow-hidden space-y-5">
+                <div className="md:col-span-5 p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800 relative overflow-hidden space-y-5">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 blur-xl rounded-full" />
                   
                   <div className="space-y-1">
@@ -348,7 +342,7 @@ export default function ServiceDetailModal({ selectedServiceId, onClose }: Servi
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-5 py-3 border-y border-white/5 text-xs text-slate-400 font-mono">
+                  <div className="flex items-center gap-5 py-3 border-y border-zinc-800 text-xs text-slate-400 font-mono">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-4 h-4 text-purple-400" />
                       <span>{service.deliveryTime}</span>
@@ -370,13 +364,13 @@ export default function ServiceDetailModal({ selectedServiceId, onClose }: Servi
               </div>
 
               {/* What You Get / Deliverables */}
-              <div className="space-y-4 pt-4 border-t border-white/5">
+              <div className="space-y-4 pt-4 border-t border-zinc-800">
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider font-mono">
                   What You'll Get
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {service.deliverables.map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-zinc-950/30 border border-white/5 hover:bg-zinc-950/60 transition-colors">
+                    <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-zinc-950/30 border border-zinc-800/60 hover:bg-zinc-950/60 transition-colors">
                       <CheckCircle2 className="w-4.5 h-4.5 text-purple-400 shrink-0 mt-0.5" />
                       <span className="text-[12px] text-slate-300 leading-relaxed">{item}</span>
                     </div>
@@ -385,13 +379,13 @@ export default function ServiceDetailModal({ selectedServiceId, onClose }: Servi
               </div>
 
               {/* Work Process Roadmap */}
-              <div className="space-y-5 pt-4 border-t border-white/5">
+              <div className="space-y-5 pt-4 border-t border-zinc-800">
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider font-mono">
                   Operational Roadmap (Work Process)
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {service.process.map((step, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-zinc-950/20 border border-white/5 relative overflow-hidden space-y-2 group/step">
+                    <div key={idx} className="p-4 rounded-xl bg-zinc-950/20 border border-zinc-800/60 relative overflow-hidden space-y-2 group/step">
                       <div className="absolute top-2 right-2 text-2xl font-display font-extrabold text-white/[0.02] group-hover/step:text-purple-500/[0.04] transition-colors font-mono">
                         {step.step}
                       </div>
@@ -411,7 +405,7 @@ export default function ServiceDetailModal({ selectedServiceId, onClose }: Servi
             </div>
 
             {/* Footer */}
-            <div className="border-t border-white/10 p-4 sm:p-5 bg-zinc-950 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-zinc-500 shrink-0 relative z-10">
+            <div className="border-t border-zinc-800 p-4 sm:p-5 bg-zinc-950 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-zinc-500 shrink-0 relative z-10">
               <span className="flex items-center gap-1.5 text-purple-400">
                 <Zap className="w-3.5 h-3.5 animate-pulse" />
                 Active Deployment

@@ -59,7 +59,7 @@ export default function ContactForm() {
         <div className="space-y-6">
           <div className="space-y-2">
             <span className="font-mono text-xs tracking-widest text-purple-400 uppercase font-bold">
-              Secure Channels
+              Contact Channels
             </span>
             <h3 className="font-display font-semibold text-2xl text-white">
               Let's Architect Something Great
@@ -122,7 +122,7 @@ export default function ContactForm() {
                   <span className="font-mono text-[9px] text-green-400 uppercase tracking-widest block font-bold">Instant Messenger</span>
                   <h4 className="text-xs font-bold text-white mt-0.5">Scan to Chat</h4>
                   <p className="text-[11px] text-zinc-400 mt-0.5 leading-normal">
-                    Scan the QR code or click below to start a secure chat session directly.
+                    Scan the QR code or click below to start a chat session directly.
                   </p>
                 </div>
                 
@@ -144,7 +144,7 @@ export default function ContactForm() {
 
         {/* Floating Social Icons */}
         <div className="pt-6 border-t border-white/5 flex items-center justify-between">
-          <span className="font-mono text-xs text-zinc-500">Secure Node Links</span>
+          <span className="font-mono text-xs text-zinc-500">Connect With Me</span>
           <div className="flex items-center gap-3">
             {/* Facebook Link */}
             <MagneticButton strength={20}>
@@ -220,10 +220,10 @@ export default function ContactForm() {
           {/* Form Header */}
           <div className="pb-4 border-b border-white/5">
             <h4 className="font-display font-semibold text-lg text-white">
-              Transmission Terminal
+              Send Message
             </h4>
             <p className="text-xs text-zinc-400 mt-1">
-              Encrypted pipeline direct to developer operational inbox.
+              Get in touch with me directly for projects, hiring, or inquiries.
             </p>
           </div>
 
@@ -248,7 +248,7 @@ export default function ContactForm() {
                     : "top-4 text-zinc-400"
                 }`}
               >
-                Sender Name
+                Your Name
               </label>
             </div>
 
@@ -272,7 +272,7 @@ export default function ContactForm() {
                     : "top-4 text-zinc-400"
                 }`}
               >
-                Operational Email
+                Your Email
               </label>
             </div>
 
@@ -296,7 +296,7 @@ export default function ContactForm() {
                     : "top-4 text-zinc-400"
                 }`}
               >
-                Message Details / Proposal
+                Message Details / Inquiry
               </label>
             </div>
           </div>
@@ -314,7 +314,7 @@ export default function ContactForm() {
                     className="flex items-center gap-2 text-xs text-purple-400 font-mono"
                   >
                     <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
-                    Transmitting payload...
+                    Sending message...
                   </motion.div>
                 )}
                 {status === "success" && (
@@ -338,7 +338,7 @@ export default function ContactForm() {
                     className="flex items-center gap-2 text-xs text-rose-400 font-mono"
                   >
                     <AlertCircle className="w-4 h-4 text-rose-400" />
-                    Please fill out all operational fields.
+                    Please fill out all fields.
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -351,7 +351,7 @@ export default function ContactForm() {
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-mono text-xs font-semibold tracking-wider uppercase shadow-[0_0_15px_rgba(168,85,247,0.3)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="w-4 h-4" />
-                Transmit Signal
+                Send Message
               </button>
             </MagneticButton>
           </div>

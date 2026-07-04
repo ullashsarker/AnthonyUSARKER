@@ -6,7 +6,13 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const ADMIN_PASSCODE = process.env.ADMIN_PASSCODE || "Arin@sarker2580";
+// Helper to sanitize passcode (removes whitespace and outer double/single quotes)
+function sanitizePasscode(code: any): string {
+  if (typeof code !== "string") return "";
+  return code.trim().replace(/^["']|["']$/g, "");
+}
+
+const ADMIN_PASSCODE = sanitizePasscode(process.env.ADMIN_PASSCODE || "Arin@sarker2580");
 
 async function startServer() {
   const app = express();
@@ -15,10 +21,10 @@ async function startServer() {
   // Use JSON middleware with 10MB limit for base64 images
   app.use(express.json({ limit: "10mb" }));
 
-  // API Route to save uploaded images to the filesystem
+  // API Route to save uploaded images or files to the filesystem
   app.post("/api/save-image", (req, res) => {
     try {
-      const passcode = req.headers["x-admin-passcode"];
+      const passcode = sanitizePasscode(req.headers["x-admin-passcode"]);
       if (passcode !== ADMIN_PASSCODE) {
         return res.status(401).json({ error: "Unauthorized access" });
       }
@@ -28,19 +34,91 @@ async function startServer() {
         return res.status(400).json({ error: "Missing filename or base64 data" });
       }
 
-      // Extract the raw base64 data
-      const base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
+      // Extract the raw base64 data supporting any MIME type (image, pdf, docx, etc.)
+      const base64Data = base64.replace(/^data:[^;]+;base64,/, "");
       const buffer = Buffer.from(base64Data, "base64");
 
       const safeFilename = path.basename(filename);
       const filePath = path.join(process.cwd(), safeFilename);
 
+      // If saving a CV file, delete other formats to prevent download conflicts
+      if (safeFilename.toLowerCase().startsWith("anthony_cv")) {
+        const extensions = [".pdf", ".docx", ".doc"];
+        extensions.forEach(ext => {
+          const otherPath = path.join(process.cwd(), `anthony_cv${ext}`);
+          if (path.extname(safeFilename).toLowerCase() !== ext && fs.existsSync(otherPath)) {
+            try {
+              fs.unlinkSync(otherPath);
+              console.log(`Deleted old CV format to prevent conflicts: ${otherPath}`);
+            } catch (err) {
+              console.error(`Failed to delete old CV format: ${otherPath}`, err);
+            }
+          }
+        });
+      }
+
       fs.writeFileSync(filePath, buffer);
-      console.log(`Successfully saved image to workspace root: ${safeFilename}`);
+      console.log(`Successfully saved file to workspace root: ${safeFilename}`);
       return res.json({ success: true, path: `/${safeFilename}` });
     } catch (error) {
-      console.error("Error saving image:", error);
-      return res.status(500).json({ error: "Failed to save image" });
+      console.error("Error saving file:", error);
+      return res.status(500).json({ error: "Failed to save file" });
+    }
+  });
+
+  // API Route to download the uploaded CV
+  app.get("/api/download-cv", (req, res) => {
+    try {
+      const pdfPath = path.join(process.cwd(), "anthony_cv.pdf");
+      const docxPath = path.join(process.cwd(), "anthony_cv.docx");
+      const docPath = path.join(process.cwd(), "anthony_cv.doc");
+
+      let filePath = "";
+      let downloadName = "";
+      let contentType = "";
+
+      if (fs.existsSync(pdfPath)) {
+        filePath = pdfPath;
+        downloadName = "Anthony_CV.pdf";
+        contentType = "application/pdf";
+      } else if (fs.existsSync(docxPath)) {
+        filePath = docxPath;
+        downloadName = "Anthony_CV.docx";
+        contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      } else if (fs.existsSync(docPath)) {
+        filePath = docPath;
+        downloadName = "Anthony_CV.doc";
+        contentType = "application/msword";
+      } else {
+        // Fallback to a placeholder (profile headshot) if no CV uploaded yet
+        const fallbackPath = path.join(process.cwd(), "anthony_suit.png");
+        if (fs.existsSync(fallbackPath)) {
+          filePath = fallbackPath;
+          downloadName = "Anthony_CV.png";
+          contentType = "image/png";
+        }
+      }
+
+      if (!filePath) {
+        return res.status(404).send("CV not found");
+      }
+
+      res.setHeader("Content-Disposition", `attachment; filename="${downloadName}"`);
+      res.setHeader("Content-Type", contentType);
+
+      const stream = fs.createReadStream(filePath);
+      stream.on("error", (err) => {
+        console.error("Stream error downloading CV:", err);
+        if (!res.headersSent) {
+          res.status(500).send("Error downloading file");
+        }
+      });
+      stream.pipe(res);
+    } catch (error) {
+      console.error("Error downloading CV:", error);
+      if (!res.headersSent) {
+        res.status(500).send("Server error during download");
+      }
     }
   });
  
@@ -91,7 +169,7 @@ async function startServer() {
 
   // API Route to verify admin passcode
   app.post("/api/verify-passcode", (req, res) => {
-    const { passcode } = req.body;
+    const passcode = sanitizePasscode(req.body.passcode);
     if (passcode === ADMIN_PASSCODE) {
       return res.json({ success: true });
     }
@@ -100,7 +178,7 @@ async function startServer() {
 
   // API Route to load contact messages
   app.get("/api/messages", (req, res) => {
-    const passcode = req.headers["x-admin-passcode"];
+    const passcode = sanitizePasscode(req.headers["x-admin-passcode"]);
     if (passcode !== ADMIN_PASSCODE) {
       return res.status(401).json({ error: "Unauthorized access" });
     }
@@ -123,7 +201,7 @@ async function startServer() {
 
   // API Route to delete a contact message
   app.delete("/api/messages/:id", (req, res) => {
-    const passcode = req.headers["x-admin-passcode"];
+    const passcode = sanitizePasscode(req.headers["x-admin-passcode"]);
     if (passcode !== ADMIN_PASSCODE) {
       return res.status(401).json({ error: "Unauthorized access" });
     }
@@ -146,7 +224,7 @@ async function startServer() {
 
   // API Route to purge all messages
   app.delete("/api/messages", (req, res) => {
-    const passcode = req.headers["x-admin-passcode"];
+    const passcode = sanitizePasscode(req.headers["x-admin-passcode"]);
     if (passcode !== ADMIN_PASSCODE) {
       return res.status(401).json({ error: "Unauthorized access" });
     }
