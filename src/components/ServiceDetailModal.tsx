@@ -7,7 +7,14 @@ import {
   Sparkles, 
   Clock, 
   ShieldCheck, 
-  Zap 
+  Zap,
+  BrainCircuit,
+  Code2,
+  Share2,
+  TrendingUp,
+  Layers,
+  Printer,
+  Palette
 } from 'lucide-react';
 import ServiceIcon from './ServiceIcon';
 
