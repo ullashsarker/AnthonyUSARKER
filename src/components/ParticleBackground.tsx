@@ -25,7 +25,7 @@ export default function ParticleBackground() {
 
     const particles: Particle[] = [];
     const particleCount = Math.min(60, Math.floor((width * height) / 25000));
-    const colors = ["#06b6d4", "#a855f7", "#3b82f6"]; // cyan, purple, blue
+    const colors = ["#a855f7", "#6366f1", "#818cf8"]; // purple, indigo, indigo-light
 
     const mouse = {
       x: -1000,
@@ -114,7 +114,7 @@ export default function ParticleBackground() {
 
           if (dist < 100) {
             const alpha = (100 - dist) / 100 * 0.15;
-            ctx.strokeStyle = `rgba(6, 182, 212, ${alpha})`;
+            ctx.strokeStyle = `rgba(168, 85, 247, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);

@@ -54,7 +54,7 @@ export default function ThreeDCard({
 
   const glowClass = 
     glowColor === "cyan" 
-      ? "box-glow-cyan shadow-cyan-950/20" 
+      ? "box-glow-blue shadow-indigo-950/20" 
       : glowColor === "purple" 
         ? "box-glow-purple shadow-purple-950/20" 
         : "box-glow-dual";

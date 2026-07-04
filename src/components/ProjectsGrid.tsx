@@ -114,33 +114,33 @@ export default function ProjectsGrid() {
             onMouseLeave={() => setHoveredIndex(null)}
             className={`group relative h-[380px] rounded-2xl glass-panel p-6 border transition-all duration-500 flex flex-col justify-between overflow-hidden cursor-pointer ${
               isHovered
-                ? project.glowColor === "cyan"
-                  ? "border-cyan-500/40 shadow-[0_0_25px_rgba(6,182,212,0.15)] bg-white/[0.06]"
-                  : project.glowColor === "purple"
-                    ? "border-purple-500/40 shadow-[0_0_25px_rgba(168,85,247,0.15)] bg-white/[0.06]"
-                    : "border-cyan-500/30 border-r-purple-500/30 shadow-[0_0_25px_rgba(168,85,247,0.1)] bg-white/[0.06]"
-                : "border-white/10 bg-white/[0.03]"
+                 ? project.glowColor === "cyan"
+                   ? "border-indigo-500/30 shadow-[0_0_25px_rgba(99,102,241,0.15)] bg-white/[0.06]"
+                   : project.glowColor === "purple"
+                     ? "border-purple-500/30 shadow-[0_0_25px_rgba(168,85,247,0.15)] bg-white/[0.06]"
+                     : "border-purple-500/20 border-r-indigo-500/20 shadow-[0_0_25px_rgba(168,85,247,0.1)] bg-white/[0.06]"
+                 : "border-white/[0.06] bg-white/[0.03]"
             }`}
           >
             {/* Background glowing sphere that moves or shines slightly */}
             <div className={`absolute -right-16 -bottom-16 w-32 h-32 rounded-full blur-3xl opacity-10 transition-all duration-500 group-hover:scale-150 ${
               project.glowColor === "cyan" 
-                ? "bg-cyan-500 group-hover:opacity-25" 
+                ? "bg-indigo-500 group-hover:opacity-25" 
                 : project.glowColor === "purple" 
                   ? "bg-purple-500 group-hover:opacity-25" 
-                  : "bg-gradient-to-tr from-cyan-500 to-purple-500 group-hover:opacity-25"
+                  : "bg-gradient-to-tr from-indigo-500 to-purple-500 group-hover:opacity-25"
             }`} />
 
             {/* Top Row - Icon, Tech Count & Link Button */}
             <div className="flex items-center justify-between z-10">
               <div className={`p-3 rounded-xl transition-all duration-300 ${
                 isHovered 
-                  ? project.glowColor === "cyan" 
-                    ? "bg-cyan-500/20 text-cyan-400 glow-cyan" 
-                    : project.glowColor === "purple"
-                      ? "bg-purple-500/20 text-purple-400 glow-purple"
-                      : "bg-indigo-500/20 text-indigo-400"
-                  : "bg-zinc-900/60 text-zinc-400"
+                   ? project.glowColor === "cyan" 
+                     ? "bg-indigo-500/20 text-indigo-400" 
+                     : project.glowColor === "purple"
+                       ? "bg-purple-500/20 text-purple-400"
+                       : "bg-indigo-500/20 text-indigo-400"
+                   : "bg-zinc-900/60 text-zinc-400"
               }`}>
                 <Icon className="w-6 h-6" />
               </div>
@@ -150,14 +150,14 @@ export default function ProjectsGrid() {
                   {project.metrics.label}: <span className="text-zinc-300">{project.metrics.value}</span>
                 </span>
                 <div className="text-zinc-600 hover:text-white transition-colors p-1.5 rounded-lg bg-zinc-900/40 border border-white/5">
-                  <ArrowUpRight className="w-4 h-4 group-hover:text-cyan-400 transition-colors" />
+                  <ArrowUpRight className="w-4 h-4 group-hover:text-purple-400 transition-colors" />
                 </div>
               </div>
             </div>
 
             {/* Middle Section - Text details */}
             <div className="space-y-2 mt-4 z-10 relative">
-              <span className="font-mono text-[10px] tracking-widest text-cyan-500 uppercase font-bold">
+               <span className="font-mono text-[10px] tracking-widest text-purple-400 uppercase font-bold">
                 {project.category}
               </span>
               <h3 className="font-display font-semibold text-lg text-white group-hover:text-zinc-100 leading-snug">

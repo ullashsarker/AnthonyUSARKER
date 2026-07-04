@@ -1,40 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  User, 
-  Settings, 
-  History, 
-  Layers, 
-  Compass, 
-  Mail, 
-  ChevronDown, 
-  Terminal, 
-  Flame, 
-  Sparkles,
-  ArrowRight,
-  Menu,
-  X,
-  Volume2,
-  VolumeX
+import {
+  Home, User, Briefcase, FolderOpen, Code2, Compass, Mail,
+  Menu, X, Volume2, VolumeX, Sparkles, ArrowRight
 } from "lucide-react";
 
 import ParticleBackground from "./components/ParticleBackground";
-import Typewriter from "./components/Typewriter";
-import MagneticButton from "./components/MagneticButton";
-import ThreeDCard from "./components/ThreeDCard";
+import Sidebar from "./components/Sidebar";
+import HeroSection from "./components/HeroSection";
+import ServicesSection from "./components/ServicesSection";
 import SkillsGrid from "./components/SkillsGrid";
 import Timeline from "./components/Timeline";
 import ProjectsGrid from "./components/ProjectsGrid";
+import StatsBar from "./components/StatsBar";
+import TestimonialsSection from "./components/TestimonialsSection";
 import LifestyleGallery from "./components/LifestyleGallery";
 import ContactForm from "./components/ContactForm";
-import { usePortfolioImage } from "./lib/imageStorage";
 import AdminDashboardModal from "./components/AdminDashboardModal";
-
-
+import { usePortfolioImage } from "./lib/imageStorage";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState("hero");
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Audio & Page States
@@ -44,103 +30,70 @@ export default function App() {
   const hasSpokenRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Robust voice intro: waits for voices to load, then speaks once
+  const { src: headshotSrc } = usePortfolioImage("profileHeadshot");
+  const { src: eliteSrc } = usePortfolioImage("lifestyleElite");
+
+  // Robust voice intro
   const speakWelcomeMessage = () => {
     if (!("speechSynthesis" in window)) return;
     if (hasSpokenRef.current) return;
-
     const text = "Hello, welcome to my portfolio website. It's me, Anthony. I am glad you have visited my personal workspace. As a full-stack developer and AI operations specialist, I focus on building smart, automated systems and high-performance digital environments. Please feel free to explore my projects. If you would like to connect, you can reach out via the contact section. Enjoy your visit.";
-
     const doSpeak = () => {
       if (hasSpokenRef.current) return;
-      
       const voices = window.speechSynthesis.getVoices();
-      if (voices.length === 0) return; // Voices not loaded yet
-      
+      if (voices.length === 0) return;
       hasSpokenRef.current = true;
-      window.speechSynthesis.cancel(); // Clear any queued utterances
-      
+      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Select a premium English male voice
       const preferredVoice = voices.find(
-        (v) => v.lang.startsWith("en") && 
-               (v.name.toLowerCase().includes("male") || 
-                v.name.includes("David") || 
-                v.name.includes("Alex") || 
-                v.name.includes("Daniel") ||
-                v.name.includes("Google UK English Male"))
+        (v) => v.lang.startsWith("en") &&
+               (v.name.toLowerCase().includes("male") ||
+                v.name.includes("David") || v.name.includes("Alex") ||
+                v.name.includes("Daniel") || v.name.includes("Google UK English Male"))
       ) || voices.find((v) => v.lang.startsWith("en"));
-      
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-      
+      if (preferredVoice) utterance.voice = preferredVoice;
       utterance.rate = 0.90;
       utterance.pitch = 1.0;
       utterance.volume = 0.40;
-      
       window.speechSynthesis.speak(utterance);
     };
-
-    // Try immediately if voices are already loaded
     const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      doSpeak();
-    } else {
-      // Wait for voices to become available, then speak
-      const onVoicesReady = () => {
-        doSpeak();
-        window.speechSynthesis.removeEventListener("voiceschanged", onVoicesReady);
-      };
+    if (voices.length > 0) { doSpeak(); }
+    else {
+      const onVoicesReady = () => { doSpeak(); window.speechSynthesis.removeEventListener("voiceschanged", onVoicesReady); };
       window.speechSynthesis.addEventListener("voiceschanged", onVoicesReady);
     }
   };
 
-  // Initialize Native HTML5 Audio player on mount
+  // Initialize audio
   useEffect(() => {
     const audio = new Audio("/audio/bg_music.mp3");
     audio.loop = true;
-    audio.volume = 0.08; // Soft background volume (8%)
+    audio.volume = 0.08;
     audioRef.current = audio;
-
-    return () => {
-      audio.pause();
-    };
+    return () => { audio.pause(); };
   }, []);
 
-  // Detect first user interaction to trigger speech and audio
+  // Detect first interaction
   useEffect(() => {
     const handleFirstInteraction = () => {
       if (hasInteractedRef.current) return;
       hasInteractedRef.current = true;
-
-      // Small delay ensures browser audio context is fully unlocked
       setTimeout(() => {
-        // Start the voice introduction
         speakWelcomeMessage();
-
-        // Start background music
         if (audioRef.current && isPlaying) {
-          audioRef.current.play().catch(err => {
-            console.warn("Audio playback blocked:", err);
-          });
+          audioRef.current.play().catch(err => console.warn("Audio blocked:", err));
         }
       }, 100);
-
-      // Cleanup event listeners
       window.removeEventListener("mousedown", handleFirstInteraction);
       window.removeEventListener("keydown", handleFirstInteraction);
       window.removeEventListener("touchstart", handleFirstInteraction);
       window.removeEventListener("scroll", handleFirstInteraction);
     };
-
-    // Use passive event listeners to avoid blocking the browser's touch/scroll thread
     window.addEventListener("mousedown", handleFirstInteraction, { passive: true });
     window.addEventListener("keydown", handleFirstInteraction, { passive: true });
     window.addEventListener("touchstart", handleFirstInteraction, { passive: true });
     window.addEventListener("scroll", handleFirstInteraction, { passive: true });
-
     return () => {
       window.removeEventListener("mousedown", handleFirstInteraction);
       window.removeEventListener("keydown", handleFirstInteraction);
@@ -152,34 +105,22 @@ export default function App() {
   const toggleAudio = () => {
     if (!audioRef.current) return;
     try {
-      const isActuallyPaused = audioRef.current.paused;
-      if (!isActuallyPaused && isPlaying) {
+      if (!audioRef.current.paused && isPlaying) {
         audioRef.current.pause();
         setIsPlaying(false);
-        if ("speechSynthesis" in window) {
-          window.speechSynthesis.cancel();
-        }
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
       } else {
-        audioRef.current.play().catch(err => console.error("Audio playback play failed:", err));
+        audioRef.current.play().catch(err => console.error("Audio failed:", err));
         setIsPlaying(true);
       }
-    } catch (err) {
-      console.error("Audio toggle interaction failed:", err);
-    }
+    } catch (err) { console.error("Audio toggle failed:", err); }
   };
 
-  const { src: headshotSrc } = usePortfolioImage("profileHeadshot");
-  const { src: eliteSrc } = usePortfolioImage("lifestyleElite");
-
-
-  // Monitor scrolling to highlight active section and apply header blur
+  // Scroll tracking
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-
-      const sections = ["hero", "about", "skills", "experience", "projects", "lifestyle", "contact"];
+      const sections = ["hero", "about", "services", "skills", "experience", "projects", "lifestyle", "contact"];
       const scrollPos = window.scrollY + 200;
-
       for (const sectionId of sections) {
         const el = document.getElementById(sectionId);
         if (el) {
@@ -192,570 +133,270 @@ export default function App() {
         }
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = [
-    { id: "hero", label: "Core", icon: Flame },
-    { id: "about", label: "Identity", icon: User },
-    { id: "skills", label: "Skills", icon: Settings },
-    { id: "experience", label: "Milestones", icon: History },
-    { id: "projects", label: "Payloads", icon: Layers },
-    { id: "lifestyle", label: "Expeditions", icon: Compass },
-    { id: "contact", label: "Transmit", icon: Mail },
-  ];
-
   const scrollToSection = (id: string) => {
-    if (isMobileMenuOpen) {
-      setIsMobileMenuOpen(false);
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 250);
-    } else {
+    setIsMobileMenuOpen(false);
+    setTimeout(() => {
       const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-    }
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
+  const mobileNavItems = [
+    { id: "hero", label: "Home", icon: Home },
+    { id: "about", label: "About", icon: User },
+    { id: "services", label: "Services", icon: Briefcase },
+    { id: "projects", label: "Portfolio", icon: FolderOpen },
+    { id: "skills", label: "Skills", icon: Code2 },
+    { id: "lifestyle", label: "Expeditions", icon: Compass },
+    { id: "contact", label: "Contact", icon: Mail },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#050506] text-slate-300 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-x-hidden">
-      
+    <div className="min-h-screen bg-[#0B0B1A] text-slate-300 font-sans selection:bg-purple-500/30 selection:text-purple-200 relative overflow-x-hidden">
 
-      {/* Background Ambient Glows from the Atmospheric Theme */}
-      <div className="absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-cyan-900/20 blur-[120px] rounded-full pointer-events-none z-0"></div>
-      <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-purple-900/20 blur-[120px] rounded-full pointer-events-none z-0"></div>
-
-      {/* Dynamic Cybernetic Particles Background (Global constellation mesh) */}
+      {/* Particles Background */}
       <div className="fixed inset-0 w-full h-screen overflow-hidden pointer-events-none z-0">
         <ParticleBackground />
-        {/* Deep global ambient mesh overlay */}
-        <div className="absolute inset-0 bg-[#050506]/5" />
+        <div className="absolute inset-0 bg-[#0B0B1A]/10" />
       </div>
 
-      {/* Cybernetic top laser scanning line effect (decorative) */}
-      <div className="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500 to-purple-500 z-50 opacity-40 shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+      {/* Ambient Glows */}
+      <div className="absolute top-[-150px] left-[10%] w-[500px] h-[500px] bg-purple-900/15 blur-[150px] rounded-full pointer-events-none z-0" />
+      <div className="absolute bottom-[-150px] right-[10%] w-[500px] h-[500px] bg-indigo-900/15 blur-[150px] rounded-full pointer-events-none z-0" />
 
-      {/* Sticky Glassmorphic Navigation Header */}
-      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-[#050506]/80 backdrop-blur-md border-b border-white/10 py-4 shadow-xl" 
-          : "bg-transparent py-6"
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-4">
-          
-          {/* Logo Name */}
-          <div 
-            onClick={() => scrollToSection("hero")}
-            className="flex items-center gap-3 cursor-pointer group shrink-0"
+      {/* Desktop Sidebar */}
+      <Sidebar activeSection={activeSection} onNavigate={scrollToSection} />
+
+      {/* Mobile Top Nav */}
+      <header className="mobile-top-nav fixed top-0 left-0 right-0 z-50 bg-[#0B0B1A]/90 backdrop-blur-xl border-b border-white/5 py-3 px-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3" onClick={() => scrollToSection("hero")}>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center">
+              <span className="font-display font-black text-sm text-white">A</span>
+            </div>
+            <span className="font-display font-bold text-sm text-white">ANTHONY</span>
+          </div>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 rounded-xl border border-white/10 bg-white/5 text-slate-300 cursor-pointer"
           >
-            <div className="relative w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-600 to-purple-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-transform duration-300 group-hover:scale-105">
-              <span className="font-display font-black text-sm text-white">AU</span>
-              {/* Inner glowing corner */}
-              <div className="absolute inset-0.5 rounded-[6px] bg-[#050506] flex items-center justify-center">
-                <span className="font-display font-black text-xs text-gradient">AU</span>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <div className="font-display font-bold text-xs sm:text-sm tracking-wide text-white group-hover:text-cyan-400 transition-colors flex items-center gap-1.5 sm:gap-2">
-                <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-cyan-400 rounded-full shadow-[0_0_8px_#22d3ee] animate-pulse"></span>
-                Anthony Ullash Sarker
-              </div>
-              <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.1em] sm:tracking-[0.2em] text-cyan-400/80 font-mono hidden sm:block">
-                System Architecture & AI Operations
-              </span>
-            </div>
-          </div>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-zinc-950/40 border border-white/5 backdrop-blur-sm">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeSection === item.id;
-              
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide transition-all ${
-                    isActive 
-                      ? "bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.1)]" 
-                      : "text-zinc-400 hover:text-white border border-transparent"
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Contact Direct CTA Header Button & Mobile Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="hidden lg:flex gap-2">
-              <div className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-[9px] uppercase tracking-wider text-slate-300 font-mono flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                Status: Online
-              </div>
-              <div className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-[9px] uppercase tracking-wider text-slate-300 font-mono">Khulna, BD</div>
-            </div>
-            <MagneticButton strength={15}>
-              <button
-                onClick={() => scrollToSection("contact")}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-zinc-950/80 border border-white/10 hover:border-cyan-400 text-[10px] sm:text-xs font-mono font-semibold text-white tracking-widest uppercase transition-all shadow-[0_0_10px_rgba(255,255,255,0.02)] cursor-pointer"
-              >
-                Signal Link
-              </button>
-            </MagneticButton>
-
-            {/* Mobile Menu Toggle Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl border border-white/10 bg-zinc-950/80 hover:border-cyan-400 text-zinc-400 hover:text-white transition-all cursor-pointer shadow-md"
-              aria-label="Toggle navigation menu"
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-4 h-4 text-cyan-400" />
-              ) : (
-                <Menu className="w-4 h-4" />
-              )}
-            </button>
-          </div>
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
-
-        {/* Mobile Dropdown Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
-            <motion.div
+            <motion.nav
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="md:hidden w-full bg-[#050506]/95 backdrop-blur-md border-t border-white/5 overflow-hidden mt-4"
+              className="mt-3 space-y-1 overflow-hidden"
             >
-              <nav className="flex flex-col gap-2 p-6">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeSection === item.id;
-                  
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => scrollToSection(item.id)}
-                      className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-xs font-mono font-medium tracking-wider uppercase transition-all ${
-                        isActive 
-                          ? "bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.1)]" 
-                          : "text-zinc-400 hover:text-white border border-transparent"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      {item.label}
-                    </button>
-                  );
-                })}
-              </nav>
-            </motion.div>
+              {mobileNavItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button key={item.id} onClick={() => scrollToSection(item.id)}
+                    className={`sidebar-nav-item w-full ${activeSection === item.id ? "active" : ""}`}>
+                    <Icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </motion.nav>
           )}
         </AnimatePresence>
       </header>
 
-      {/* Main Single Page Sections Container */}
-      <main className="max-w-7xl mx-auto px-6 relative z-10 pt-20">
-
-        {/* 1. HERO SECTION */}
-        <section id="hero" className="min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-16 text-center relative">
-          <div className="space-y-8 max-w-4xl">
-            
-            {/* Main Profile Picture inside a glowing, neon-bordered circular frame */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 mx-auto"
-            >
-              {/* Outer Neon Glow Circle (Rotating background gradient) */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-500 via-purple-500 to-indigo-500 animate-spin-slow blur-md opacity-75 shadow-[0_0_25px_rgba(6,182,212,0.4)]" />
-              
-              {/* Inner Circle Image Container */}
-              <div className="absolute inset-[4px] rounded-full bg-white overflow-hidden border border-white/10 z-10">
-                <img
-                  src={headshotSrc}
-                  alt="Anthony Ullash Sarker Headshot"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-contain object-center scale-100 hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              
-              {/* Cyber Operational Dot badge */}
-              <div className="absolute bottom-2 right-4 w-6 h-6 rounded-full bg-[#030305] border border-white/10 flex items-center justify-center z-20">
-                <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]" />
-              </div>
-            </motion.div>
-
-            {/* Typography Name & System Tag */}
-            <div className="space-y-3">
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium text-purple-400 bg-purple-950/20 border border-purple-500/20"
+      {/* Main Content Area — offset by sidebar on desktop, offset by top nav on mobile */}
+      <main className="lg:ml-[240px] relative z-10 pt-16 lg:pt-0">
+        {/* Top Nav Bar (desktop only, inside content area) */}
+        <div className="hidden lg:flex items-center justify-between px-8 py-4 border-b border-white/5 bg-[#0B0B1A]/60 backdrop-blur-sm sticky top-0 z-30">
+          <nav className="flex items-center gap-1">
+            {mobileNavItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                  activeSection === item.id
+                    ? "bg-white/10 text-white"
+                    : "text-slate-400 hover:text-white"
+                }`}
               >
-                <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                SYSTEM_NODE_ACTIVE
-              </motion.div>
-              
-              <motion.h1
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="font-display font-bold text-4xl sm:text-6xl text-white tracking-tight leading-none"
-              >
-                Anthony Ullash Sarker
-              </motion.h1>
-
-              {/* Animated Headlines - Typewriter Integration */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="h-8 flex items-center justify-center"
-              >
-                <Typewriter
-                  phrases={[
-                    "AI Operations Expert",
-                    "Full-Stack Developer",
-                    "Pinterest & Growth Marketing Specialist"
-                  ]}
-                  typingSpeed={70}
-                  deletingSpeed={30}
-                  pauseDuration={2500}
-                />
-              </motion.div>
-            </div>
-
-            {/* Short Bio */}
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-sans"
-            >
-              Blending technical development, creative visual asset design, and cutting-edge AI orchestration into high-performance digital environments. Welcome to my secure portfolio portal.
-            </motion.p>
-
-            {/* Call To Actions */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
-            >
-              {/* Explore button */}
-              <MagneticButton strength={20}>
-                <button
-                  onClick={() => scrollToSection("projects")}
-                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-mono text-xs font-semibold tracking-wider uppercase shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all cursor-pointer flex items-center gap-2 group"
-                >
-                  Explore Portfolio
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </button>
-              </MagneticButton>
-
-              {/* Touch button */}
-              <MagneticButton strength={20}>
-                <button
-                  onClick={() => scrollToSection("contact")}
-                  className="px-6 py-3.5 rounded-xl bg-zinc-950/80 border border-white/10 hover:border-cyan-400 text-white font-mono text-xs font-semibold tracking-wider uppercase transition-all shadow-md cursor-pointer"
-                >
-                  Get In Touch
-                </button>
-              </MagneticButton>
-            </motion.div>
-          </div>
-
-          {/* Animated Scroll indicator */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 cursor-pointer animate-bounce" onClick={() => scrollToSection("about")}>
-            <div className="w-6 h-10 rounded-full border border-zinc-700 flex items-start justify-center p-1.5 bg-[#030305]/40 backdrop-blur-sm">
-              <div className="w-1.5 h-2 bg-cyan-400 rounded-full" />
-            </div>
-          </div>
-        </section>
-
-        {/* 2. ABOUT ME SECTION */}
-        <section id="about" className="py-24 border-t border-white/5 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-16"
+                {item.label}
+              </button>
+            ))}
+          </nav>
+          <button
+            onClick={() => scrollToSection("contact")}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold transition-all cursor-pointer"
           >
-            
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div className="space-y-2">
-                <span className="font-mono text-xs tracking-widest text-cyan-500 uppercase font-bold block">
-                  Profile Registry
-                </span>
-                <h2 className="font-display font-semibold text-3xl text-white">
-                  About Me
-                </h2>
-              </div>
-              <p className="text-zinc-500 font-mono text-xs max-w-xs">
-                Mapping analytical frameworks into robust, scalable software layers.
-              </p>
-            </div>
+            Let's Talk
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
 
-            {/* Split layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              
-              {/* Suit Image Frame */}
-              <div className="lg:col-span-5 flex justify-center">
-                <div className="relative w-full max-w-[360px] aspect-[4/5] rounded-2xl p-1 box-glow-cyan overflow-hidden group">
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden bg-zinc-950">
-                    <img
-                      src={eliteSrc}
-                      alt="Anthony Ullash Sarker Professional Shot"
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover object-top opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 filter saturate-50 group-hover:saturate-100"
-                    />
-                    
-                    {/* Retro coordinate HUD text overlay */}
-                    <div className="absolute top-4 left-4 font-mono text-[9px] text-cyan-400 bg-zinc-950/80 px-2 py-1 rounded border border-white/5">
-                      NODE_ID // sarker.au
-                    </div>
+        <div className="max-w-6xl mx-auto px-6 sm:px-8">
+
+          {/* 1. HERO */}
+          <HeroSection onNavigate={scrollToSection} />
+
+          {/* 2. SERVICES */}
+          <ServicesSection />
+
+          {/* 3. ABOUT */}
+          <section id="about" className="py-20 border-t border-white/5">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="space-y-12"
+            >
+              <div className="space-y-2">
+                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Profile</span>
+                <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">About Me</h2>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <div className="lg:col-span-5 flex justify-center">
+                  <div className="relative w-full max-w-[340px] aspect-[4/5] rounded-2xl overflow-hidden group">
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-500 via-indigo-500 to-cyan-500 opacity-20 group-hover:opacity-30 transition-opacity" />
+                    <img src={eliteSrc} alt="Anthony Ullash Sarker" referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover object-top rounded-2xl border border-white/10 group-hover:scale-105 transition-transform duration-700" />
+                  </div>
+                </div>
+                <div className="lg:col-span-7 space-y-5">
+                  <h3 className="font-display font-semibold text-xl text-white">Bridging Analytics & Elite Software Systems</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">
+                    Equipped with an academic background in <span className="text-purple-400 font-medium">BBA (Honours) in Accounting from Govt. Hazi Muhammad Mohsin College, Khulna</span>, Anthony drives analytical thinking and meticulous data precision directly into advanced software engineering.
+                  </p>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    Throughout years of active technical specialization, Anthony has built a strong foundation in building custom AI-driven utilities, orchestrating automated digital environments, advanced prompt engineering, and eliminating infrastructure bugs.
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-white/5">
+                    {[
+                      { label: "Experience", value: "3+ Years" },
+                      { label: "Delivered", value: "15+ Apps" },
+                      { label: "Email Rate", value: "98% Inbox" },
+                      { label: "Core OS", value: "Linux" },
+                    ].map((stat) => (
+                      <div key={stat.label} className="p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                        <span className="text-[10px] text-slate-500 uppercase font-medium block">{stat.label}</span>
+                        <span className="font-display font-bold text-base text-white">{stat.value}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
+            </motion.div>
+          </section>
 
-              {/* Bio & Analytical context */}
-              <div className="lg:col-span-7 space-y-6">
-                <h3 className="font-display font-semibold text-xl text-white">
-                  Bridging Financial Analytics & Elite Software Systems
-                </h3>
-                
-                <p className="text-zinc-300 text-sm leading-relaxed font-sans">
-                  Equipped with an academic background in <span className="text-cyan-400 font-medium">BBA (Honours) in Accounting from Govt. Hazi Muhammad Mohsin College, Khulna</span>, Anthony drives analytical thinking and meticulous data precision directly into advanced software engineering. This mathematical and structured background ensures every system is architected with complete operational efficiency, financial viability, and absolute logic.
-                </p>
+          {/* 4. SKILLS */}
+          <section id="skills" className="py-20 border-t border-white/5">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
+              <div className="space-y-2">
+                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Capabilities</span>
+                <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Technical Arsenal</h2>
+              </div>
+              <SkillsGrid />
+            </motion.div>
+          </section>
 
-                <p className="text-zinc-400 text-sm leading-relaxed font-sans">
-                  Throughout years of active technical specialization, Anthony has built a strong foundation in building custom AI-driven utilities, orchestrating automated digital environments, advanced prompt engineering, and eliminating infrastructure bugs. From responsive layouts to optimized native interfaces, he transforms complex operational requirements into pristine digital products.
-                </p>
+          {/* 5. EXPERIENCE */}
+          <section id="experience" className="py-20 border-t border-white/5">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
+              <div className="space-y-2">
+                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Career</span>
+                <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Operational History</h2>
+              </div>
+              <Timeline />
+            </motion.div>
+          </section>
 
-                {/* Cyber HUD stats grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/5">
-                  <div className="p-4 bg-zinc-950/40 rounded-xl border border-white/5">
-                    <span className="font-mono text-zinc-500 text-[10px] uppercase block">Operations</span>
-                    <span className="font-display font-bold text-lg text-white">3+ Years</span>
-                  </div>
-                  <div className="p-4 bg-zinc-950/40 rounded-xl border border-white/5">
-                    <span className="font-mono text-zinc-500 text-[10px] uppercase block">Delivered Apps</span>
-                    <span className="font-display font-bold text-lg text-white">15+ Nodes</span>
-                  </div>
-                  <div className="p-4 bg-zinc-950/40 rounded-xl border border-white/5">
-                    <span className="font-mono text-zinc-500 text-[10px] uppercase block">Email Warmups</span>
-                    <span className="font-display font-bold text-lg text-white">98% Inbox</span>
-                  </div>
-                  <div className="p-4 bg-zinc-950/40 rounded-xl border border-white/5">
-                    <span className="font-mono text-zinc-500 text-[10px] uppercase block">Core OS</span>
-                    <span className="font-display font-bold text-lg text-white">Linux Power</span>
-                  </div>
+          {/* 6. PROJECTS */}
+          <section id="projects" className="py-20 border-t border-white/5">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
+              <div className="flex items-end justify-between">
+                <div className="space-y-2">
+                  <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">My Work</span>
+                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Featured Projects</h2>
                 </div>
+                <button className="hidden sm:flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors cursor-pointer font-medium">
+                  View All Projects <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
+              <ProjectsGrid />
+            </motion.div>
+          </section>
 
-            </div>
-          </motion.div>
-        </section>
+          {/* 7. STATS BAR */}
+          <StatsBar />
 
-        {/* 3. SKILLS SECTION */}
-        <section id="skills" className="py-24 border-t border-white/5 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-16"
-          >
-            
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          {/* 8. TESTIMONIALS */}
+          <section className="py-20 border-t border-white/5">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }}>
+              <TestimonialsSection />
+            </motion.div>
+          </section>
+
+          {/* 9. LIFESTYLE */}
+          <section id="lifestyle" className="py-20 border-t border-white/5">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
               <div className="space-y-2">
-                <span className="font-mono text-xs tracking-widest text-purple-500 uppercase font-bold block">
-                  Capabilities Grid
-                </span>
-                <h2 className="font-display font-semibold text-3xl text-white">
-                  Technical Arsenal
-                </h2>
+                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Expeditions</span>
+                <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">The Traveling Developer</h2>
               </div>
-              <p className="text-zinc-500 font-mono text-xs max-w-xs">
-                Interactive metrics grading software engineering and automated operations capabilities.
-              </p>
-            </div>
+              <LifestyleGallery />
+            </motion.div>
+          </section>
 
-            {/* Interactive Grid component */}
-            <SkillsGrid />
-          </motion.div>
-        </section>
-
-        {/* 4. EXPERIENCE TIMELINE */}
-        <section id="experience" className="py-24 border-t border-white/5 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-16"
-          >
-            
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          {/* 10. CONTACT */}
+          <section id="contact" className="py-20 border-t border-white/5 pb-32">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
               <div className="space-y-2">
-                <span className="font-mono text-xs tracking-widest text-cyan-500 uppercase font-bold block">
-                  Career Registry
-                </span>
-                <h2 className="font-display font-semibold text-3xl text-white">
-                  Operational History
-                </h2>
+                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Get In Touch</span>
+                <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Let's Work Together</h2>
               </div>
-              <p className="text-zinc-500 font-mono text-xs max-w-xs">
-                Documenting physical nodes of operational control and software milestones.
-              </p>
-            </div>
-
-            {/* Dual Pane Timeline component */}
-            <Timeline />
-          </motion.div>
-        </section>
-
-        {/* 5. PROJECTS SHOWCASE */}
-        <section id="projects" className="py-24 border-t border-white/5 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-16"
-          >
-            
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div className="space-y-2">
-                <span className="font-mono text-xs tracking-widest text-purple-500 uppercase font-bold block">
-                  Delivered Payloads
-                </span>
-                <h2 className="font-display font-semibold text-3xl text-white">
-                  Project Showcases
-                </h2>
-              </div>
-              <p className="text-zinc-500 font-mono text-xs max-w-xs">
-                Bento-style representation of systems, validation utilities, and custom applications.
-              </p>
-            </div>
-
-            {/* Projects Bento Grid */}
-            <ProjectsGrid />
-          </motion.div>
-        </section>
-
-        {/* 6. HOBBIES & LIFESTYLE SECTION - "THE TRAVELING DEVELOPER" */}
-        <section id="lifestyle" className="py-24 border-t border-white/5 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-16"
-          >
-            
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div className="space-y-2">
-                <span className="font-mono text-xs tracking-widest text-cyan-500 uppercase font-bold block">
-                  Outdoor Expeditions
-                </span>
-                <h2 className="font-display font-semibold text-3xl text-white">
-                  The Traveling Developer
-                </h2>
-              </div>
-              <p className="text-zinc-500 font-mono text-xs max-w-xs">
-                Charting wilderness trails to expand cognitive boundaries.
-              </p>
-            </div>
-
-            {/* Custom Gallery Component */}
-            <LifestyleGallery />
-          </motion.div>
-        </section>
-
-        {/* 7. ANIMATED CONTACT SECTION */}
-        <section id="contact" className="py-24 border-t border-white/5 relative pb-32">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-16"
-          >
-            
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div className="space-y-2">
-                <span className="font-mono text-xs tracking-widest text-purple-500 uppercase font-bold block">
-                  Transmission Link
-                </span>
-                <h2 className="font-display font-semibold text-3xl text-white">
-                  Get In Touch
-                </h2>
-              </div>
-              <p className="text-zinc-500 font-mono text-xs max-w-xs">
-                Initiate a high-speed communication channel with the operational base.
-              </p>
-            </div>
-
-            {/* Contact Terminal Panel */}
-            <ContactForm />
-          </motion.div>
-        </section>
-
+              <ContactForm />
+            </motion.div>
+          </section>
+        </div>
       </main>
 
-      {/* Cybernetic Footer */}
-      <footer className="border-t border-white/10 bg-[#050506]/80 py-8 relative z-10 text-[10px] uppercase tracking-widest text-slate-500 font-mono">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-            <span>© 2026 Anthony Ullash Sarker. All Rights Reserved.</span>
-            <span className="hidden md:inline text-slate-700">|</span>
-            <span 
+      {/* Footer */}
+      <footer className="lg:ml-[240px] border-t border-white/5 bg-[#0B0B1A]/90 py-8 relative z-10">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono uppercase tracking-wider">
+          <div className="flex items-center gap-4">
+            <span>© 2026 Anthony Ullash Sarker</span>
+            <span
               onClick={() => window.dispatchEvent(new CustomEvent('open-admin-dashboard'))}
-              className="cursor-pointer hover:text-cyan-400 transition-colors flex items-center gap-1.5"
-              title="Open Admin Operations Console"
+              className="cursor-pointer hover:text-purple-400 transition-colors flex items-center gap-1"
+              title="Admin Console"
             >
-              SYSTEM VERSION: 4.2.0-STABLE
-              <span className="text-[8px] text-slate-600 hover:text-cyan-400 border border-slate-800 px-1.5 py-0.5 rounded leading-none lowercase select-none">[access]</span>
+              v4.2.0 <span className="text-[8px] border border-slate-700 px-1 py-0.5 rounded">[access]</span>
             </span>
-            <span className="hidden md:inline text-slate-700">|</span>
-            <span>UPTIME: 99.98%</span>
           </div>
-          <div className="flex items-center gap-6">
-            <span className="text-cyan-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]"></span>
-              LATENCY: 14MS
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5 text-purple-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+              Online
             </span>
-            <span className="text-purple-400">ENCRYPTION: AES-256</span>
+            <span>Khulna, BD</span>
           </div>
         </div>
       </footer>
+
       <AdminDashboardModal />
 
-
-
-      {/* Floating Audio Controller */}
+      {/* Audio Controller */}
       {isLoaded && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -763,27 +404,23 @@ export default function App() {
           transition={{ delay: 1.0, duration: 0.5 }}
           className="fixed bottom-6 right-6 z-40"
         >
-          <button
-            onClick={toggleAudio}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#050506]/85 backdrop-blur-md border border-white/10 hover:border-cyan-400 text-white shadow-xl transition-all cursor-pointer group hover:shadow-[0_0_15px_rgba(6,182,212,0.2)]"
-            title={isPlaying ? "Pause Background Music" : "Play Background Music"}
-          >
-            {/* Visualizer bars or muted speaker */}
+          <button onClick={toggleAudio}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#0D0D20]/90 backdrop-blur-md border border-white/10 hover:border-purple-400/30 text-white shadow-xl transition-all cursor-pointer group"
+            title={isPlaying ? "Pause Music" : "Play Music"}>
             <div className="flex items-end gap-0.5 h-4 w-5 justify-center">
               {isPlaying ? (
                 <>
-                  <span className="w-0.5 h-4 bg-cyan-400 rounded-full audio-bar audio-bar-1" />
-                  <span className="w-0.5 h-4 bg-purple-400 rounded-full audio-bar audio-bar-2" />
-                  <span className="w-0.5 h-4 bg-cyan-400 rounded-full audio-bar audio-bar-3" />
-                  <span className="w-0.5 h-4 bg-purple-400 rounded-full audio-bar audio-bar-4" />
+                  <span className="w-0.5 h-4 bg-purple-400 rounded-full audio-bar audio-bar-1" />
+                  <span className="w-0.5 h-4 bg-indigo-400 rounded-full audio-bar audio-bar-2" />
+                  <span className="w-0.5 h-4 bg-purple-400 rounded-full audio-bar audio-bar-3" />
+                  <span className="w-0.5 h-4 bg-indigo-400 rounded-full audio-bar audio-bar-4" />
                 </>
               ) : (
-                <VolumeX className="w-3.5 h-3.5 text-zinc-500 group-hover:text-cyan-400 transition-colors" />
+                <VolumeX className="w-3.5 h-3.5 text-slate-500 group-hover:text-purple-400 transition-colors" />
               )}
             </div>
-            
-            <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">
-              {isPlaying ? "Audio: On" : "Audio: Muted"}
+            <span className="font-mono text-[9px] uppercase tracking-widest text-slate-400 group-hover:text-white transition-colors">
+              {isPlaying ? "On" : "Off"}
             </span>
           </button>
         </motion.div>

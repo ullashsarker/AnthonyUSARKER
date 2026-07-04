@@ -58,7 +58,7 @@ export default function ContactForm() {
       <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
         <div className="space-y-6">
           <div className="space-y-2">
-            <span className="font-mono text-xs tracking-widest text-cyan-500 uppercase font-bold">
+            <span className="font-mono text-xs tracking-widest text-purple-400 uppercase font-bold">
               Secure Channels
             </span>
             <h3 className="font-display font-semibold text-2xl text-white">
@@ -74,14 +74,14 @@ export default function ContactForm() {
             {/* Direct Email Link */}
             <a 
               href="mailto:anthonyusarker@gmail.com" 
-              className="flex items-center gap-4 p-4 rounded-xl glass-panel border border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.06] transition-all duration-300 group"
+              className="flex items-center gap-4 p-4 rounded-xl glass-panel border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.06] transition-all duration-300 group"
             >
-              <div className="p-3 bg-cyan-500/10 text-cyan-400 rounded-lg group-hover:bg-cyan-500/20 transition-all duration-300">
+              <div className="p-3 bg-purple-500/10 text-purple-400 rounded-lg group-hover:bg-purple-500/20 transition-all duration-300">
                 <Mail className="w-5 h-5" />
               </div>
               <div>
                 <span className="font-mono text-[10px] text-zinc-500 uppercase block">Send Direct Mail</span>
-                <span className="text-sm font-sans font-medium text-zinc-200 group-hover:text-cyan-300 transition-colors">
+                <span className="text-sm font-sans font-medium text-zinc-200 group-hover:text-purple-300 transition-colors">
                   anthonyusarker@gmail.com
                 </span>
               </div>
@@ -190,7 +190,7 @@ export default function ContactForm() {
                 href="https://github.com" 
                 target="_blank" 
                 rel="noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-zinc-950/80 border border-white/5 hover:border-cyan-400 text-zinc-400 hover:text-cyan-400 hover:shadow-[0_0_10px_rgba(6,182,212,0.2)] transition-all duration-300"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-zinc-950/80 border border-white/5 hover:border-purple-400 text-zinc-400 hover:text-purple-400 hover:shadow-[0_0_10px_rgba(168,85,247,0.2)] transition-all duration-300"
               >
                 <Github className="w-5 h-5" />
               </a>
@@ -238,13 +238,13 @@ export default function ContactForm() {
                 onFocus={() => handleFocus("name")}
                 onBlur={() => handleBlur("name", formState.name)}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-zinc-950/60 rounded-xl border border-white/5 focus:border-cyan-500/40 focus:outline-none text-sm text-white font-sans transition-colors pt-5 h-12"
+                className="w-full px-4 py-3 bg-zinc-950/60 rounded-xl border border-white/[0.06] focus:border-purple-500/40 focus:outline-none text-sm text-white font-sans transition-colors pt-5 h-12"
               />
               <label
                 htmlFor="form-name"
                 className={`absolute left-4 transition-all pointer-events-none font-mono text-xs ${
                   focusedField === "name" || formState.name
-                    ? "top-1 text-[10px] text-cyan-400 font-semibold"
+                    ? "top-1 text-[10px] text-purple-400 font-semibold"
                     : "top-4 text-zinc-400"
                 }`}
               >
@@ -262,13 +262,13 @@ export default function ContactForm() {
                 onFocus={() => handleFocus("email")}
                 onBlur={() => handleBlur("email", formState.email)}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-zinc-950/60 rounded-xl border border-white/5 focus:border-cyan-500/40 focus:outline-none text-sm text-white font-sans transition-colors pt-5 h-12"
+                className="w-full px-4 py-3 bg-zinc-950/60 rounded-xl border border-white/[0.06] focus:border-purple-500/40 focus:outline-none text-sm text-white font-sans transition-colors pt-5 h-12"
               />
               <label
                 htmlFor="form-email"
                 className={`absolute left-4 transition-all pointer-events-none font-mono text-xs ${
                   focusedField === "email" || formState.email
-                    ? "top-1 text-[10px] text-cyan-400 font-semibold"
+                    ? "top-1 text-[10px] text-purple-400 font-semibold"
                     : "top-4 text-zinc-400"
                 }`}
               >
@@ -311,9 +311,9 @@ export default function ContactForm() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
-                    className="flex items-center gap-2 text-xs text-cyan-400 font-mono"
+                    className="flex items-center gap-2 text-xs text-purple-400 font-mono"
                   >
-                    <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
                     Transmitting payload...
                   </motion.div>
                 )}
@@ -348,7 +348,7 @@ export default function ContactForm() {
               <button
                 type="submit"
                 disabled={status === "sending"}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-mono text-xs font-semibold tracking-wider uppercase shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-mono text-xs font-semibold tracking-wider uppercase shadow-[0_0_15px_rgba(168,85,247,0.3)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="w-4 h-4" />
                 Transmit Signal

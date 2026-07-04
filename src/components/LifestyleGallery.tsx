@@ -10,8 +10,8 @@ export default function LifestyleGallery() {
       {/* Left side: Content / Philosophy of The Traveling Developer */}
       <div className="lg:col-span-5 space-y-6">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium text-cyan-400 bg-cyan-950/20 border border-cyan-500/20">
-            <Compass className="w-4 h-4 text-cyan-400 animate-spin-slow" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium text-purple-400 bg-purple-950/20 border border-purple-500/20">
+            <Compass className="w-4 h-4 text-purple-400 animate-spin-slow" />
             Active Explorations
           </div>
           <h3 className="font-display font-semibold text-2xl text-white">
@@ -26,7 +26,7 @@ export default function LifestyleGallery() {
         {/* List of Expeditions */}
         <div className="space-y-4 pt-2">
           <div className="flex gap-4 p-4 rounded-xl glass-panel border border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06] transition-all duration-300">
-            <div className="p-2 bg-cyan-500/10 text-cyan-400 rounded-lg h-fit">
+            <div className="p-2 bg-purple-500/10 text-purple-400 rounded-lg h-fit">
               <Sailboat className="w-5 h-5" />
             </div>
             <div>
@@ -64,7 +64,7 @@ export default function LifestyleGallery() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative group rounded-2xl overflow-hidden box-glow-cyan h-[360px]"
+          className="relative group rounded-2xl overflow-hidden box-glow-purple h-[360px]"
         >
           <img
             src={seaSrc}

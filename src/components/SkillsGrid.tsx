@@ -114,19 +114,19 @@ export default function SkillsGrid() {
               onClick={() => setActiveTab(category.id)}
               className={`group relative p-5 rounded-2xl cursor-pointer transition-all duration-300 border ${
                 isActive 
-                  ? category.glowColor === "cyan"
-                    ? "bg-cyan-950/15 border-cyan-500/40 box-glow-cyan"
-                    : category.glowColor === "purple"
-                      ? "bg-purple-950/15 border-purple-500/40 box-glow-purple"
-                      : "bg-slate-900/40 border-purple-500/40 box-glow-dual"
-                  : "bg-white/[0.03] border-white/10 hover:border-white/20 hover:bg-white/[0.06]"
+                   ? category.glowColor === "cyan"
+                     ? "bg-indigo-950/15 border-indigo-500/30 box-glow-blue"
+                     : category.glowColor === "purple"
+                       ? "bg-purple-950/15 border-purple-500/30 box-glow-purple"
+                       : "bg-slate-900/40 border-purple-500/30 box-glow-dual"
+                   : "bg-white/[0.03] border-white/[0.06] hover:border-white/10 hover:bg-white/[0.05]"
               }`}
             >
               <div className="flex items-start gap-4">
                 <div className={`p-3 rounded-xl transition-all duration-300 ${
                   isActive 
                     ? category.glowColor === "cyan" 
-                      ? "bg-cyan-500/20 text-cyan-400 glow-cyan" 
+                      ? "bg-indigo-500/20 text-indigo-400 glow-blue" 
                       : "bg-purple-500/20 text-purple-400 glow-purple" 
                     : "bg-zinc-900/80 text-zinc-400 group-hover:text-zinc-200"
                 }`}>
@@ -161,7 +161,7 @@ export default function SkillsGrid() {
             <div className="flex items-center gap-3 pb-4 border-b border-white/5">
               <div className={`p-2 rounded-lg ${
                 currentCategory.glowColor === "cyan" 
-                  ? "bg-cyan-500/10 text-cyan-400" 
+                  ? "bg-indigo-500/10 text-indigo-400" 
                   : currentCategory.glowColor === "purple"
                     ? "bg-purple-500/10 text-purple-400"
                     : "bg-indigo-500/10 text-indigo-400"
@@ -169,7 +169,7 @@ export default function SkillsGrid() {
                 <currentCategory.icon className="w-5 h-5" />
               </div>
               <div>
-                <span className="font-mono text-xs tracking-wider text-cyan-500 uppercase font-semibold">
+                <span className="font-mono text-xs tracking-wider text-purple-400 uppercase font-semibold">
                   Technical Metrics
                 </span>
                 <h3 className="font-display font-semibold text-lg text-white">
@@ -184,7 +184,7 @@ export default function SkillsGrid() {
                 <div key={skill.name} className="space-y-2">
                   <div className="flex justify-between items-center text-sm">
                     <span className="font-sans font-medium text-zinc-200">{skill.name}</span>
-                    <span className="font-mono text-xs font-semibold text-cyan-400 glow-cyan">
+                    <span className="font-mono text-xs font-semibold text-purple-400 glow-purple">
                       {skill.level}%
                     </span>
                   </div>
@@ -198,10 +198,10 @@ export default function SkillsGrid() {
                       transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
                       className={`h-full rounded-full ${
                         currentCategory.glowColor === "cyan"
-                          ? "bg-gradient-to-r from-cyan-600 to-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.4)]"
+                          ? "bg-gradient-to-r from-indigo-600 to-blue-400 shadow-[0_0_10px_rgba(99,102,241,0.4)]"
                           : currentCategory.glowColor === "purple"
                             ? "bg-gradient-to-r from-purple-600 to-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.4)]"
-                            : "bg-gradient-to-r from-cyan-500 to-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.4)]"
+                            : "bg-gradient-to-r from-purple-500 to-indigo-500 shadow-[0_0_10px_rgba(168,85,247,0.4)]"
                       }`}
                     />
                   </div>
@@ -225,8 +225,8 @@ export default function SkillsGrid() {
 
           <div className="pt-6 border-t border-white/5 mt-6 flex justify-between items-center text-xs text-zinc-500 font-mono">
             <span>Verified Core Competencies</span>
-            <span className="flex items-center gap-1 text-cyan-500">
-              <ShieldCheck className="w-4 h-4 text-cyan-400 animate-pulse" />
+            <span className="flex items-center gap-1 text-purple-400">
+              <ShieldCheck className="w-4 h-4 text-purple-400 animate-pulse" />
               Operational Master-Level
             </span>
           </div>

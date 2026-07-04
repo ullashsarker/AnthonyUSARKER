@@ -123,6 +123,13 @@ export async function deleteImageFromDB(key: string): Promise<void> {
 
 // Map logical keys to the original file names and unsplash fallbacks
 export const IMAGE_MAPPING = {
+  heroMain: {
+    label: 'Hero Section Main Photo (Gradient Orb)',
+    originalFile: 'anthony_hero.png',
+    oldFile: 'anthony_hero.png',
+    fallback: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+    description: 'Main hero photo with sunglasses, hoodie, and gradient cyan-to-pink orb background.'
+  },
   profileHeadshot: {
     label: 'Profile Headshot (Suit & Tie)',
     originalFile: 'anthony_suit.png',

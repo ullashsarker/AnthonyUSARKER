@@ -49,7 +49,7 @@ export default function Typewriter({
   }, [currentText, isDeleting, currentPhraseIndex, phrases, typingSpeed, deletingSpeed, pauseDuration]);
 
   return (
-    <span className="inline-block font-mono font-semibold tracking-wide text-cyan-400 glow-cyan md:text-xl text-md">
+    <span className="inline-block font-mono font-semibold tracking-wide text-purple-400 glow-purple md:text-xl text-md">
       {currentText}
       <span className="inline-block w-1.5 h-5 ml-1 bg-purple-500 animate-pulse" />
     </span>
