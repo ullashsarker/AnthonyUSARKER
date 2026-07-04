@@ -86,25 +86,15 @@ export default function AdminDashboardModal() {
     setIsVerifying(true);
     setPasscodeError(null);
 
-    try {
-      const response = await fetch('/api/verify-passcode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ passcode: codeToVerify })
-      });
-
-      if (response.ok) {
-        setIsAuthenticated(true);
-        sessionStorage.setItem('admin_passcode', codeToVerify);
-        addLog('[AUTH] Authentication successful. Access granted.');
-      } else {
-        setPasscodeError('Access Denied. Invalid passcode.');
-        sessionStorage.removeItem('admin_passcode');
-      }
-    } catch (err) {
-      console.error(err);
-      setPasscodeError('Connection failed. Please check backend server.');
-    } finally {
+    // Netlify স্ট্যাটিক সাইটের সাথে মিল রেখে সরাসরি ফ্রন্টএন্ডে পাসওয়ার্ড ভ্যালিডেশন করা হচ্ছে
+    if (codeToVerify === "Arin@sarker2580") {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('admin_passcode', codeToVerify);
+      addLog('[AUTH] Authentication successful. Access granted.');
+      setIsVerifying(false);
+    } else {
+      setPasscodeError('Access Denied. Invalid passcode.');
+      sessionStorage.removeItem('admin_passcode');
       setIsVerifying(false);
     }
   };
