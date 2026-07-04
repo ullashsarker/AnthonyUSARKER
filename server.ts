@@ -12,7 +12,8 @@ function sanitizePasscode(code: any): string {
   return code.trim().replace(/^["']|["']$/g, "");
 }
 
-const ADMIN_PASSCODE = sanitizePasscode(process.env.ADMIN_PASSCODE || "Arin@sarker2580");
+// .env ফাইলের ওপর নির্ভর না করে সরাসরি আপনার পাসওয়ার্ডটি এখানে ফিক্সড করে দেওয়া হলো
+const ADMIN_PASSCODE = "Arin@sarker2580";
 
 async function startServer() {
   const app = express();
@@ -252,8 +253,6 @@ async function startServer() {
   }
 
   // Serve static images/files from root (handles uploaded assets in both dev and prod)
-  // This must be placed AFTER Vite middleware (in dev) and dist middleware (in prod)
-  // to avoid intercepting source code files (.ts, .tsx, index.html).
   app.use(express.static(process.cwd()));
 
   // Fallback for SPA routing in production
