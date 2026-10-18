@@ -86,7 +86,7 @@ export default function Timeline() {
       {/* Left Pane - Interactive Vertical Timeline */}
       <div className="lg:col-span-7 space-y-8 relative">
         {/* Vertical Timeline Guide Line */}
-        <div className="absolute left-[23px] top-4 bottom-4 w-[2px] bg-gradient-to-b from-purple-500 via-indigo-500 to-transparent opacity-20 hidden md:block" />
+        <div className="absolute left-[23px] top-4 bottom-4 w-[2px] bg-gradient-to-b from-white/20 via-zinc-600/20 to-transparent hidden md:block" />
 
         {experiences.map((exp, index) => (
           <motion.div
@@ -98,22 +98,22 @@ export default function Timeline() {
             className="relative flex flex-col md:flex-row gap-6 group"
           >
             {/* Timeline node bullet (desktop only) */}
-            <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full border border-zinc-800 bg-zinc-950 z-10 transition-all duration-300 group-hover:border-purple-400 group-hover:shadow-[0_0_15px_rgba(168,85,247,0.3)] shrink-0">
-              <Briefcase className="w-5 h-5 text-zinc-400 group-hover:text-purple-400 transition-colors" />
+            <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full border border-white/10 bg-zinc-950 z-10 transition-all duration-300 group-hover:border-white/40 group-hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] shrink-0">
+              <Briefcase className="w-5 h-5 text-zinc-400 group-hover:text-white transition-colors" />
             </div>
 
             {/* Event Details Card */}
-            <div className="flex-1 p-6 rounded-2xl glass-panel border border-white/[0.06] group-hover:border-white/10 transition-all duration-300 relative overflow-hidden bg-white/[0.03]">
+            <div className="flex-1 p-6 rounded-2xl glass-panel border border-white/[0.06] group-hover:border-white/15 transition-all duration-300 relative overflow-hidden bg-white/[0.03]">
               {/* Background accent glow */}
-              <div className="absolute -right-24 -top-24 w-48 h-48 rounded-full bg-purple-500/5 blur-3xl group-hover:bg-purple-500/10 transition-all duration-500 pointer-events-none" />
+              <div className="absolute -right-24 -top-24 w-48 h-48 rounded-full bg-white/[0.02] blur-3xl group-hover:bg-white/[0.04] transition-all duration-500 pointer-events-none" />
 
               <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/5">
                 <div>
-                  <h4 className="font-display font-semibold text-lg text-white group-hover:text-purple-300 transition-colors">
+                  <h4 className="font-display font-semibold text-lg text-white group-hover:text-zinc-200 transition-colors">
                     {exp.role}
                   </h4>
                   <div className="flex items-center gap-2 mt-1 text-sm text-zinc-400 font-sans">
-                    <Building2 className="w-4 h-4 text-purple-400 shrink-0" />
+                    <Building2 className="w-4 h-4 text-zinc-400 shrink-0" />
                     <span className="font-medium text-zinc-300">{exp.company}</span>
                     {exp.location && (
                       <span className="flex items-center gap-1 text-xs text-zinc-500 border-l border-white/10 pl-2">
@@ -124,8 +124,8 @@ export default function Timeline() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium text-purple-300 bg-purple-950/20 border border-purple-500/20">
-                  <Calendar className="w-3.5 h-3.5 text-purple-400" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium text-zinc-300 bg-white/[0.05] border border-white/10">
+                  <Calendar className="w-3.5 h-3.5 text-zinc-400" />
                   {exp.period}
                 </div>
               </div>
@@ -138,7 +138,7 @@ export default function Timeline() {
               <ul className="mt-4 space-y-2">
                 {exp.highlights.map((highlight) => (
                   <li key={highlight} className="flex items-start gap-2.5 text-xs text-zinc-300 font-sans">
-                    <span className="p-0.5 rounded-full bg-purple-500/20 text-purple-400 mt-0.5 shrink-0">
+                    <span className="p-0.5 rounded-full bg-white/10 text-zinc-300 mt-0.5 shrink-0">
                       <Sparkles className="w-3 h-3" />
                     </span>
                     <span className="leading-relaxed">{highlight}</span>
@@ -153,7 +153,7 @@ export default function Timeline() {
       {/* Right Pane - Featured Corporate Image Frame (Interactive Gallery with Lightbox) */}
       <div className="lg:col-span-5 flex flex-col gap-6">
         <div className="space-y-1">
-          <span className="font-mono text-[10px] tracking-wider uppercase text-purple-400 font-bold block">
+          <span className="font-mono text-[10px] tracking-wider uppercase text-zinc-400 font-bold block">
             Executive Presence
           </span>
           <h4 className="font-display font-bold text-lg text-white">
@@ -174,7 +174,7 @@ export default function Timeline() {
             subtitle: "Frontend Management & Operations Executive Setup",
             location: "Cumilla, Bangladesh"
           })}
-          className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden glass-panel border border-white/10 group cursor-pointer shadow-xl hover:border-purple-500/40 transition-all duration-500"
+          className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden glass-panel border border-white/10 group cursor-pointer shadow-xl hover:border-white/30 transition-all duration-500"
         >
           <div className="relative w-full h-full overflow-hidden bg-zinc-950">
             <img
@@ -187,28 +187,28 @@ export default function Timeline() {
             />
             
             {/* Cyber Corner brackets */}
-            <div className="absolute top-3 left-3 w-3.5 h-3.5 border-t-2 border-l-2 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute top-3 right-3 w-3.5 h-3.5 border-t-2 border-r-2 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute bottom-3 left-3 w-3.5 h-3.5 border-b-2 border-l-2 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute bottom-3 right-3 w-3.5 h-3.5 border-b-2 border-r-2 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-3 left-3 w-3.5 h-3.5 border-t-2 border-l-2 border-white/40 opacity-60 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-3 right-3 w-3.5 h-3.5 border-t-2 border-r-2 border-white/40 opacity-60 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute bottom-3 left-3 w-3.5 h-3.5 border-b-2 border-l-2 border-white/40 opacity-60 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute bottom-3 right-3 w-3.5 h-3.5 border-b-2 border-r-2 border-white/40 opacity-60 group-hover:opacity-100 transition-opacity" />
 
             {/* Hover zoom pill */}
             <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-950/80 border border-white/20 p-1.5 rounded-lg text-white">
-              <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
+              <Maximize2 className="w-3.5 h-3.5 text-zinc-200" />
             </div>
 
             {/* Glowing Tag overlay */}
             <div className="absolute bottom-3 left-3 right-3 p-3 rounded-xl glass-panel border border-white/10 bg-zinc-950/85 backdrop-blur-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-mono text-[9px] tracking-widest text-purple-400 uppercase font-bold block mb-0.5">
+                  <span className="font-mono text-[9px] tracking-widest text-zinc-400 uppercase font-bold block mb-0.5">
                     Operational Setup
                   </span>
                   <p className="font-display font-medium text-xs text-white">
                     Frontend Management & Operations Executive Setup
                   </p>
                 </div>
-                <span className="text-[10px] font-mono text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-[10px] font-mono text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity">
                   Zoom
                 </span>
               </div>
@@ -229,7 +229,7 @@ export default function Timeline() {
             subtitle: "Elite Continental Operations & Logistics",
             location: "Hotel Elite Palace"
           })}
-          className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden glass-panel border border-white/10 group cursor-pointer shadow-xl hover:border-cyan-400/40 transition-all duration-500"
+          className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden glass-panel border border-white/10 group cursor-pointer shadow-xl hover:border-white/30 transition-all duration-500"
         >
           <div className="relative w-full h-full overflow-hidden bg-zinc-950">
             <img
@@ -242,28 +242,28 @@ export default function Timeline() {
             />
             
             {/* Cyber Corner brackets */}
-            <div className="absolute top-3 left-3 w-3.5 h-3.5 border-t-2 border-l-2 border-cyan-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute top-3 right-3 w-3.5 h-3.5 border-t-2 border-r-2 border-cyan-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute bottom-3 left-3 w-3.5 h-3.5 border-b-2 border-l-2 border-cyan-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute bottom-3 right-3 w-3.5 h-3.5 border-b-2 border-r-2 border-cyan-400 opacity-60 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-3 left-3 w-3.5 h-3.5 border-t-2 border-l-2 border-white/40 opacity-60 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-3 right-3 w-3.5 h-3.5 border-t-2 border-r-2 border-white/40 opacity-60 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute bottom-3 left-3 w-3.5 h-3.5 border-b-2 border-l-2 border-white/40 opacity-60 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute bottom-3 right-3 w-3.5 h-3.5 border-b-2 border-r-2 border-white/40 opacity-60 group-hover:opacity-100 transition-opacity" />
 
             {/* Hover zoom pill */}
             <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-950/80 border border-white/20 p-1.5 rounded-lg text-white">
-              <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
+              <Maximize2 className="w-3.5 h-3.5 text-zinc-200" />
             </div>
 
             {/* Glowing Tag overlay */}
             <div className="absolute bottom-3 left-3 right-3 p-3 rounded-xl glass-panel border border-white/10 bg-zinc-950/85 backdrop-blur-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-mono text-[9px] tracking-widest text-cyan-400 uppercase font-bold block mb-0.5">
+                  <span className="font-mono text-[9px] tracking-widest text-zinc-400 uppercase font-bold block mb-0.5">
                     Corporate Venue
                   </span>
                   <p className="font-display font-medium text-xs text-white">
                     Elite Continental Operations & Logistics
                   </p>
                 </div>
-                <span className="text-[10px] font-mono text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-[10px] font-mono text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity">
                   Zoom
                 </span>
               </div>

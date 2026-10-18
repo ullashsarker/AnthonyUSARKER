@@ -28,8 +28,8 @@ export default function LifestyleGallery() {
         {/* Left side: Content / Philosophy of The Traveling Developer */}
         <div className="lg:col-span-5 space-y-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium text-purple-400 bg-purple-950/20 border border-purple-500/20">
-              <Compass className="w-4 h-4 text-purple-400 animate-spin-slow" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium text-zinc-300 bg-white/[0.05] border border-white/10">
+              <Compass className="w-4 h-4 text-zinc-300 animate-spin-slow" />
               Active Explorations
             </div>
             <h3 className="font-display font-semibold text-2xl text-white">
@@ -44,7 +44,7 @@ export default function LifestyleGallery() {
           {/* List of Expeditions */}
           <div className="space-y-4 pt-2">
             <div className="flex gap-4 p-4 rounded-xl glass-panel border border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06] transition-all duration-300">
-              <div className="p-2 bg-purple-500/10 text-purple-400 rounded-lg h-fit">
+              <div className="p-2 bg-white/10 text-zinc-200 rounded-lg h-fit border border-white/10">
                 <Sailboat className="w-5 h-5" />
               </div>
               <div>
@@ -56,7 +56,7 @@ export default function LifestyleGallery() {
             </div>
 
             <div className="flex gap-4 p-4 rounded-xl glass-panel border border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06] transition-all duration-300">
-              <div className="p-2 bg-purple-500/10 text-purple-400 rounded-lg h-fit">
+              <div className="p-2 bg-white/10 text-zinc-200 rounded-lg h-fit border border-white/10">
                 <Palmtree className="w-5 h-5" />
               </div>
               <div>
@@ -89,7 +89,7 @@ export default function LifestyleGallery() {
               subtitle: "Deep-focus ideation across Saint Martin's marine horizons",
               location: "Saint Martin's Island, Bangladesh"
             })}
-            className="relative group rounded-2xl overflow-hidden glass-panel border border-white/10 hover:border-cyan-400/40 shadow-xl h-[360px] cursor-pointer transition-all duration-500"
+            className="relative group rounded-2xl overflow-hidden glass-panel border border-white/10 hover:border-white/30 shadow-xl h-[360px] cursor-pointer transition-all duration-500"
           >
             <img
               src={seaSrc}
@@ -104,20 +104,20 @@ export default function LifestyleGallery() {
 
             {/* Hover zoom pill */}
             <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-950/80 border border-white/20 p-1.5 rounded-lg text-white">
-              <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
+              <Maximize2 className="w-3.5 h-3.5 text-zinc-200" />
             </div>
 
             {/* Overlay Tag */}
             <div className="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-zinc-950/80 backdrop-blur-md border border-white/10 flex items-center justify-between">
               <div>
-                <span className="font-mono text-[9px] tracking-wider uppercase text-cyan-400 font-bold block">
+                <span className="font-mono text-[9px] tracking-wider uppercase text-zinc-400 font-bold block">
                   Coastal Expedition
                 </span>
                 <p className="font-display font-medium text-xs text-white">
                   Saint Martin Marine Horizons
                 </p>
               </div>
-              <MapPin className="w-3.5 h-3.5 text-purple-400" />
+              <MapPin className="w-3.5 h-3.5 text-zinc-400" />
             </div>
           </motion.div>
 
@@ -134,7 +134,7 @@ export default function LifestyleGallery() {
               subtitle: "Exploring remote island trails on two wheels",
               location: "Cox's Bazar / Saint Martin"
             })}
-            className="relative group rounded-2xl overflow-hidden glass-panel border border-white/10 hover:border-purple-500/40 shadow-xl h-[360px] cursor-pointer transition-all duration-500"
+            className="relative group rounded-2xl overflow-hidden glass-panel border border-white/10 hover:border-white/30 shadow-xl h-[360px] cursor-pointer transition-all duration-500"
           >
             <img
               src={bicycleSrc}
@@ -149,20 +149,20 @@ export default function LifestyleGallery() {
 
             {/* Hover zoom pill */}
             <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-950/80 border border-white/20 p-1.5 rounded-lg text-white">
-              <Maximize2 className="w-3.5 h-3.5 text-purple-400" />
+              <Maximize2 className="w-3.5 h-3.5 text-zinc-200" />
             </div>
 
             {/* Overlay Tag */}
             <div className="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-zinc-950/80 backdrop-blur-md border border-white/10 flex items-center justify-between">
               <div>
-                <span className="font-mono text-[9px] tracking-wider uppercase text-purple-400 font-bold block">
+                <span className="font-mono text-[9px] tracking-wider uppercase text-zinc-400 font-bold block">
                   Endurance Trail
                 </span>
                 <p className="font-display font-medium text-xs text-white">
                   Island Marine Cycling
                 </p>
               </div>
-              <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+              <MapPin className="w-3.5 h-3.5 text-zinc-400" />
             </div>
           </motion.div>
         </div>

@@ -58,10 +58,10 @@ export default function ParticleBackground() {
       };
     };
 
-    // 3 subtle ambient color orbs for desktop
-    orbs.push(createOrb("rgba(139, 92, 246, 0.07)", "rgba(139, 92, 246, 0.005)"));
-    orbs.push(createOrb("rgba(79, 70, 229, 0.06)", "rgba(79, 70, 229, 0.005)"));
-    orbs.push(createOrb("rgba(6, 182, 212, 0.04)", "rgba(6, 182, 212, 0.004)"));
+    // 3 subtle monochrome ambient color orbs for desktop
+    orbs.push(createOrb("rgba(255, 255, 255, 0.03)", "rgba(255, 255, 255, 0.002)"));
+    orbs.push(createOrb("rgba(212, 212, 216, 0.025)", "rgba(212, 212, 216, 0.002)"));
+    orbs.push(createOrb("rgba(161, 161, 170, 0.02)", "rgba(161, 161, 170, 0.001)"));
 
     const handleResize = () => {
       if (!canvas) return;
@@ -135,8 +135,8 @@ export default function ParticleBackground() {
         aria-hidden="true" 
         className="absolute inset-0 w-full h-full pointer-events-none opacity-40 overflow-hidden"
       >
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-purple-600/10 blur-[100px]" />
-        <div className="absolute bottom-1/3 right-10 w-64 h-64 rounded-full bg-cyan-500/10 blur-[90px]" />
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-white/[0.02] blur-[100px]" />
+        <div className="absolute bottom-1/3 right-10 w-64 h-64 rounded-full bg-white/[0.015] blur-[90px]" />
       </div>
     );
   }

@@ -76,17 +76,17 @@ export default function ProjectDetailModal({
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           className="relative w-full max-w-2xl bg-zinc-900/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-10 my-8 flex flex-col max-h-[90vh]"
         >
-          {/* Subtle Ambient Glow inside modal */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-purple-500/10 via-cyan-500/5 to-transparent blur-3xl pointer-events-none" />
+          {/* Subtle Ambient Light inside modal */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-white/[0.02] blur-3xl pointer-events-none" />
 
           {/* Modal Header */}
-          <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4 relative z-10">
+          <div className="p-6 border-b border-white/10 flex items-start justify-between gap-4 relative z-10">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 font-semibold">
+                <span className="font-mono text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-200 border border-white/15 font-semibold">
                   {project.category}
                 </span>
-                <span className="font-mono text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-semibold">
+                <span className="font-mono text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-semibold">
                   {project.metrics.label}: {project.metrics.value}
                 </span>
               </div>
@@ -119,7 +119,7 @@ export default function ProjectDetailModal({
             {/* Architecture & Engineering Highlights */}
             <div className="space-y-3 p-4 rounded-xl bg-white/[0.02] border border-white/5">
               <div className="flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-cyan-400" />
+                <Cpu className="w-4 h-4 text-zinc-300" />
                 <h4 className="text-xs font-mono uppercase tracking-wider text-white font-bold">
                   System Architecture & Solved Challenges
                 </h4>
@@ -127,7 +127,7 @@ export default function ProjectDetailModal({
               <ul className="space-y-2">
                 {project.architectureDetails.map((item, idx) => (
                   <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-300 leading-relaxed">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-purple-400 mt-0.5 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -153,7 +153,7 @@ export default function ProjectDetailModal({
           </div>
 
           {/* Modal Footer */}
-          <div className="p-5 border-t border-white/5 bg-zinc-950/60 flex flex-wrap items-center justify-between gap-3 relative z-10">
+          <div className="p-5 border-t border-white/10 bg-zinc-950/80 flex flex-wrap items-center justify-between gap-3 relative z-10">
             <div className="flex items-center gap-3">
               {project.githubUrl && (
                 <a
@@ -171,7 +171,7 @@ export default function ProjectDetailModal({
                   href={project.demoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-all"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold transition-all"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>Live App / Demo</span>
@@ -189,7 +189,7 @@ export default function ProjectDetailModal({
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }
               }}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-lg hover:shadow-purple-500/20 cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold transition-all shadow-[0_4px_20px_rgba(255,255,255,0.15)] cursor-pointer active:scale-95"
             >
               <span>Discuss Similar Solution</span>
               <ArrowRight className="w-3.5 h-3.5" />

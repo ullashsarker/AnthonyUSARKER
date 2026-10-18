@@ -102,7 +102,7 @@ export default function StatsBar() {
                 className="flex flex-col items-center text-center gap-2 group"
               >
                 <div className="p-3 rounded-xl bg-white/5 border border-white/5 group-hover:border-white/10 transition-all mb-1">
-                  <Icon className="w-5 h-5 text-purple-300" />
+                  <Icon className="w-5 h-5 text-zinc-200" />
                 </div>
                 <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 <span className="text-xs text-slate-400 font-medium">{stat.label}</span>

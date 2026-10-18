@@ -49,9 +49,9 @@ export default function Typewriter({
   }, [currentText, isDeleting, currentPhraseIndex, phrases, typingSpeed, deletingSpeed, pauseDuration]);
 
   return (
-    <span className="inline-flex items-center flex-wrap font-mono font-semibold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-400 text-sm sm:text-lg md:text-xl leading-snug">
+    <span className="inline-flex items-center flex-wrap font-mono font-semibold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-sm sm:text-lg md:text-xl leading-snug">
       <span>{currentText}</span>
-      <span className="inline-block w-1.5 h-4 sm:h-5 ml-1 bg-cyan-400 rounded-xs animate-pulse align-middle" />
+      <span className="inline-block w-1.5 h-4 sm:h-5 ml-1 bg-zinc-200 rounded-xs animate-pulse align-middle" />
     </span>
   );
 }

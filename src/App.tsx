@@ -151,26 +151,22 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-slate-300 font-sans selection:bg-purple-500/30 selection:text-purple-200 relative overflow-x-hidden">
+    <div className="min-h-screen bg-zinc-950 text-slate-300 font-sans selection:bg-white/20 selection:text-white relative overflow-x-hidden">
 
       {/* Particles Background */}
       <div className="fixed inset-0 w-full h-screen overflow-hidden pointer-events-none z-0">
         <ParticleBackground />
-        <div className="absolute inset-0 bg-zinc-950/10" />
+        <div className="absolute inset-0 bg-black/40" />
       </div>
-
-      {/* Ambient Glows */}
-      <div className="absolute top-[-150px] left-[10%] w-[500px] h-[500px] bg-purple-900/15 blur-[150px] rounded-full pointer-events-none z-0" />
-      <div className="absolute bottom-[-150px] right-[10%] w-[500px] h-[500px] bg-indigo-900/15 blur-[150px] rounded-full pointer-events-none z-0" />
 
       {/* Desktop Sidebar */}
       <Sidebar activeSection={activeSection} onNavigate={scrollToSection} />
 
       {/* Mobile Top Nav */}
-      <header className="mobile-top-nav fixed top-0 left-0 right-0 z-50 bg-zinc-950/90 backdrop-blur-xl border-b border-white/5 py-3 px-4">
+      <header className="mobile-top-nav fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/[0.08] py-3 px-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3" onClick={() => scrollToSection("hero")}>
-            <div className="relative w-9 h-9 rounded-full border border-zinc-800 overflow-hidden shadow-lg flex items-center justify-center bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 shrink-0">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => scrollToSection("hero")}>
+            <div className="relative w-9 h-9 rounded-full border border-white/10 overflow-hidden shadow-lg flex items-center justify-center bg-zinc-900 shrink-0">
               <span className="font-display font-bold text-xs text-white absolute">AU</span>
               {headshotSrc && (
                 <img 
@@ -183,11 +179,12 @@ export default function App() {
                 />
               )}
             </div>
-            <span className="font-display font-bold text-sm text-white">ANTHONY</span>
+            <span className="font-display font-bold text-sm text-white tracking-wider">ANTHONY</span>
           </div>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-xl border border-white/10 bg-white/5 text-slate-300 cursor-pointer"
+            className="p-2 rounded-xl border border-white/10 bg-white/5 text-zinc-300 cursor-pointer"
+            aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -215,10 +212,10 @@ export default function App() {
         </AnimatePresence>
       </header>
 
-      {/* Main Content Area — offset by sidebar on desktop, offset by top nav on mobile */}
+      {/* Main Content Area */}
       <main className="lg:ml-[240px] relative z-10 pt-16 lg:pt-0">
         {/* Top Nav Bar (desktop only, inside content area) */}
-        <div className="hidden lg:flex items-center justify-between px-8 py-4 border-b border-white/5 bg-zinc-950/60 backdrop-blur-sm sticky top-0 z-30">
+        <div className="hidden lg:flex items-center justify-between px-8 py-4 border-b border-white/[0.08] bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-30">
           <nav className="flex items-center gap-1">
             {mobileNavItems.map((item) => (
               <button
@@ -226,8 +223,8 @@ export default function App() {
                 onClick={() => scrollToSection(item.id)}
                 className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
                   activeSection === item.id
-                    ? "bg-white/10 text-white"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-white/10 text-white border border-white/10"
+                    : "text-zinc-400 hover:text-white"
                 }`}
               >
                 {item.label}
@@ -236,7 +233,7 @@ export default function App() {
           </nav>
           <button
             onClick={() => scrollToSection("contact")}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95"
           >
             Let's Talk
             <ArrowRight className="w-3.5 h-3.5" />
@@ -261,15 +258,15 @@ export default function App() {
               className="space-y-12"
             >
               <div className="relative space-y-2 pl-6">
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
-                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
-                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Profile</span>
+                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-white via-zinc-400 to-transparent rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-white/[0.02] blur-2xl rounded-full pointer-events-none" />
+                <span className="font-mono text-xs tracking-[0.2em] text-zinc-400 uppercase font-semibold block">Profile</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">About Me</h2>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                 <div className="lg:col-span-5 flex justify-center">
                   <div className="relative w-full max-w-[340px] aspect-[4/5] rounded-2xl overflow-hidden group">
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-500 via-indigo-500 to-cyan-500 opacity-20 group-hover:opacity-30 transition-opacity" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/10 via-zinc-600/10 to-transparent opacity-20 group-hover:opacity-30 transition-opacity" />
                     <img src={eliteSrc} alt="Anthony Ullash Sarker" referrerPolicy="no-referrer"
                       className="w-full h-full object-cover object-top rounded-2xl border border-white/10 group-hover:scale-105 transition-transform duration-700" />
                   </div>
@@ -277,7 +274,7 @@ export default function App() {
                 <div className="lg:col-span-7 space-y-5">
                   <h3 className="font-display font-semibold text-xl text-white">Bridging Analytics & Elite Software Systems</h3>
                   <p className="text-slate-300 text-sm leading-relaxed">
-                    Equipped with an academic background in <span className="text-purple-400 font-medium">BBA (Honours) in Accounting from Govt. Hazi Muhammad Mohsin College, Khulna</span>, Anthony drives analytical thinking and meticulous data precision directly into advanced software engineering.
+                    Equipped with an academic background in <span className="text-zinc-200 font-semibold border-b border-white/30 pb-0.5">BBA (Honours) in Accounting from Govt. Hazi Muhammad Mohsin College, Khulna</span>, Anthony drives analytical thinking and meticulous data precision directly into advanced software engineering.
                   </p>
                   <p className="text-slate-400 text-sm leading-relaxed">
                     Throughout years of active technical specialization, Anthony has built a strong foundation in building custom AI-driven utilities, orchestrating automated digital environments, advanced prompt engineering, and eliminating infrastructure bugs.
@@ -305,9 +302,9 @@ export default function App() {
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
               <div className="relative space-y-2 pl-6">
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
-                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
-                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Capabilities</span>
+                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-white via-zinc-400 to-transparent rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-white/[0.02] blur-2xl rounded-full pointer-events-none" />
+                <span className="font-mono text-xs tracking-[0.2em] text-zinc-400 uppercase font-semibold block">Capabilities</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Technical Arsenal</h2>
               </div>
               <SkillsGrid />
@@ -319,9 +316,9 @@ export default function App() {
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
               <div className="relative space-y-2 pl-6">
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
-                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
-                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Career</span>
+                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-white via-zinc-400 to-transparent rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-white/[0.02] blur-2xl rounded-full pointer-events-none" />
+                <span className="font-mono text-xs tracking-[0.2em] text-zinc-400 uppercase font-semibold block">Career</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Operational History</h2>
               </div>
               <Timeline />
@@ -334,9 +331,9 @@ export default function App() {
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                 <div className="relative space-y-2 pl-6">
-                  <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
-                  <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
-                  <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">My Work</span>
+                  <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-white via-zinc-400 to-transparent rounded-full" />
+                  <div className="absolute -left-10 top-0 w-20 h-20 bg-white/[0.02] blur-2xl rounded-full pointer-events-none" />
+                  <span className="font-mono text-xs tracking-[0.2em] text-zinc-400 uppercase font-semibold block">My Work</span>
                   <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Featured Projects</h2>
                 </div>
                 <button className="hidden sm:flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors cursor-pointer font-medium">
@@ -363,9 +360,9 @@ export default function App() {
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
               <div className="relative space-y-2 pl-6">
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
-                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
-                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Expeditions</span>
+                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-white via-zinc-400 to-transparent rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-white/[0.02] blur-2xl rounded-full pointer-events-none" />
+                <span className="font-mono text-xs tracking-[0.2em] text-zinc-400 uppercase font-semibold block">Expeditions</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">The Traveling Developer</h2>
               </div>
               <LifestyleGallery />
@@ -377,9 +374,9 @@ export default function App() {
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="space-y-12">
               <div className="relative space-y-2 pl-6">
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-purple-500 to-cyan-400 rounded-full" />
-                <div className="absolute -left-10 top-0 w-20 h-20 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
-                <span className="font-mono text-xs tracking-[0.2em] text-purple-400 uppercase font-semibold block">Get In Touch</span>
+                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-white via-zinc-400 to-transparent rounded-full" />
+                <div className="absolute -left-10 top-0 w-20 h-20 bg-white/[0.02] blur-2xl rounded-full pointer-events-none" />
+                <span className="font-mono text-xs tracking-[0.2em] text-zinc-400 uppercase font-semibold block">Get In Touch</span>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">Let's Work Together</h2>
               </div>
               <ContactForm />
@@ -395,15 +392,15 @@ export default function App() {
             <span>© 2026 Anthony Ullash Sarker</span>
             <span
               onClick={() => window.dispatchEvent(new CustomEvent('open-admin-dashboard'))}
-              className="cursor-pointer hover:text-purple-400 transition-colors flex items-center gap-1"
+              className="cursor-pointer hover:text-white transition-colors flex items-center gap-1"
               title="Admin Console"
             >
-              v4.2.0 <span className="text-[8px] border border-slate-700 px-1 py-0.5 rounded">[access]</span>
+              v4.2.0 <span className="text-[8px] border border-zinc-700 px-1 py-0.5 rounded">[access]</span>
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5 text-purple-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Online
             </span>
             <span>Khulna, BD</span>

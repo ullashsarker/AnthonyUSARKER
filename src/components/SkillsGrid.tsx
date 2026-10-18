@@ -22,7 +22,6 @@ interface SkillCategory {
   id: string;
   title: string;
   icon: React.ComponentType<any>;
-  glowColor: "cyan" | "purple" | "dual";
   shortDesc: string;
   skills: SkillItem[];
 }
@@ -35,7 +34,6 @@ export default function SkillsGrid() {
       id: "ai_ops",
       title: "AI Operations & Intelligence",
       icon: BrainCircuit,
-      glowColor: "dual",
       shortDesc: "Bespoke assistant engineering, intelligent conversational agents, and high-volume scripts.",
       skills: [
         { name: "Custom AI Assistant Architecture", level: 98, details: ["Personal Productivity Bot", "System Prompt Hardening", "RAG Alignment"] },
@@ -48,7 +46,6 @@ export default function SkillsGrid() {
       id: "tech",
       title: "Web & Full-Stack Development",
       icon: Code2,
-      glowColor: "cyan",
       shortDesc: "Building modern scalable interfaces, Node.js optimization, and lag-free interactive experiences.",
       skills: [
         { name: "Frontend Engineering (React 19, Tailwind CSS, TypeScript)", level: 96, details: ["Interactive Canvas API", "Modern Framer Motion", "Semantic Fluid Layouts"] },
@@ -61,7 +58,6 @@ export default function SkillsGrid() {
       id: "bulk_systems",
       title: "Systems & Digital Architecture",
       icon: Terminal,
-      glowColor: "purple",
       shortDesc: "Industrial email delivery grids, domain warming setups, and OS tuning configurations.",
       skills: [
         { name: "Bulk Email Architecture", level: 98, details: ["Mailgun SMTP Relays", "Outlook Batch Grids", "Word Mail Merge Routing"] },
@@ -74,7 +70,6 @@ export default function SkillsGrid() {
       id: "pinterest",
       title: "Digital Growth & Visual Search",
       icon: Share2,
-      glowColor: "purple",
       shortDesc: "Driving high-CTR pin aesthetics, strategic boards optimization, and automated viral traffic scaling.",
       skills: [
         { name: "Strategic Pinterest Marketing", level: 97, details: ["Algorithmic SEO Placement", "Keyword Mapping", "Audience Insights"] },
@@ -87,7 +82,6 @@ export default function SkillsGrid() {
       id: "design",
       title: "UI/UX & Content Creation",
       icon: Palette,
-      glowColor: "cyan",
       shortDesc: "Expert visual asset production, layout customization, and high-converting graphic banners.",
       skills: [
         { name: "Expert Visual Asset Design", level: 96, details: ["Composition Theory", "Brand Identity Guidelines", "Vector Asset Designing"] },
@@ -103,7 +97,7 @@ export default function SkillsGrid() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       {/* Category Selection Sidebar */}
-      <div className="lg:col-span-5 space-y-4">
+      <div className="lg:col-span-5 space-y-3">
         {skillCategories.map((category) => {
           const Icon = category.icon;
           const isActive = activeTab === category.id;
@@ -112,38 +106,32 @@ export default function SkillsGrid() {
             <div
               key={category.id}
               onClick={() => setActiveTab(category.id)}
-              className={`group relative p-5 rounded-2xl cursor-pointer transition-all duration-300 border ${
+              className={`group relative p-4 sm:p-5 rounded-2xl cursor-pointer transition-all duration-300 border ${
                 isActive 
-                   ? category.glowColor === "cyan"
-                     ? "bg-indigo-950/15 border-indigo-500/30 box-glow-blue"
-                     : category.glowColor === "purple"
-                       ? "bg-purple-950/15 border-purple-500/30 box-glow-purple"
-                       : "bg-slate-900/40 border-purple-500/30 box-glow-dual"
-                   : "bg-white/[0.03] border-white/[0.06] hover:border-white/10 hover:bg-white/[0.05]"
+                  ? "bg-white/[0.08] border-white/20 shadow-[0_4px_24px_rgba(0,0,0,0.6)]"
+                  : "bg-white/[0.03] border-white/[0.06] hover:border-white/10 hover:bg-white/[0.05]"
               }`}
             >
               <div className="flex items-start gap-4">
                 <div className={`p-3 rounded-xl transition-all duration-300 ${
                   isActive 
-                    ? category.glowColor === "cyan" 
-                      ? "bg-indigo-500/20 text-indigo-400 glow-blue" 
-                      : "bg-purple-500/20 text-purple-400 glow-purple" 
+                    ? "bg-white text-zinc-950 font-bold" 
                     : "bg-zinc-900/80 text-zinc-400 group-hover:text-zinc-200"
                 }`}>
-                  <Icon className="w-6 h-6" />
+                  <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex-1 space-y-1">
-                  <h4 className={`font-display font-medium text-md transition-colors ${
-                    isActive ? "text-white" : "text-zinc-300 group-hover:text-white"
+                  <h4 className={`font-display font-medium text-sm sm:text-base transition-colors ${
+                    isActive ? "text-white font-semibold" : "text-zinc-300 group-hover:text-white"
                   }`}>
                     {category.title}
                   </h4>
-                  <p className="text-xs text-zinc-400 line-clamp-2">
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
                     {category.shortDesc}
                   </p>
                 </div>
-                <ChevronRight className={`w-5 h-5 text-zinc-600 self-center transition-transform duration-300 ${
-                  isActive ? "translate-x-1 text-zinc-300" : "group-hover:translate-x-1 group-hover:text-zinc-400"
+                <ChevronRight className={`w-4 h-4 text-zinc-600 self-center transition-transform duration-300 ${
+                  isActive ? "translate-x-1 text-white" : "group-hover:translate-x-1 group-hover:text-zinc-400"
                 }`} />
               </div>
             </div>
@@ -154,22 +142,15 @@ export default function SkillsGrid() {
       {/* Skills Detail Display */}
       <div className="lg:col-span-7">
         <ThreeDCard 
-          glowColor={currentCategory.glowColor}
-          className="h-full min-h-[460px] flex flex-col justify-between"
+          className="h-full min-h-[460px] flex flex-col justify-between bg-[#121212]/80 backdrop-blur-xl border border-white/10"
         >
           <div className="space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-white/5">
-              <div className={`p-2 rounded-lg ${
-                currentCategory.glowColor === "cyan" 
-                  ? "bg-indigo-500/10 text-indigo-400" 
-                  : currentCategory.glowColor === "purple"
-                    ? "bg-purple-500/10 text-purple-400"
-                    : "bg-indigo-500/10 text-indigo-400"
-              }`}>
+            <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+              <div className="p-2.5 rounded-xl bg-white/10 text-white border border-white/10">
                 <currentCategory.icon className="w-5 h-5" />
               </div>
               <div>
-                <span className="font-mono text-xs tracking-wider text-purple-400 uppercase font-semibold">
+                <span className="font-mono text-xs tracking-wider text-zinc-400 uppercase font-semibold">
                   Technical Metrics
                 </span>
                 <h3 className="font-display font-semibold text-lg text-white">
@@ -184,25 +165,19 @@ export default function SkillsGrid() {
                 <div key={skill.name} className="space-y-2">
                   <div className="flex justify-between items-center text-sm">
                     <span className="font-sans font-medium text-zinc-200">{skill.name}</span>
-                    <span className="font-mono text-xs font-semibold text-purple-400 glow-purple">
+                    <span className="font-mono text-xs font-bold text-white">
                       {skill.level}%
                     </span>
                   </div>
                   
                   {/* Outer track */}
-                  <div className="h-2 w-full bg-zinc-950/80 rounded-full overflow-hidden border border-white/5">
+                  <div className="h-1.5 w-full bg-zinc-950/80 rounded-full overflow-hidden border border-white/5">
                     {/* Inner glowing bar */}
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${skill.level}%` }}
                       transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
-                      className={`h-full rounded-full ${
-                        currentCategory.glowColor === "cyan"
-                          ? "bg-gradient-to-r from-indigo-600 to-blue-400 shadow-[0_0_10px_rgba(99,102,241,0.4)]"
-                          : currentCategory.glowColor === "purple"
-                            ? "bg-gradient-to-r from-purple-600 to-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.4)]"
-                            : "bg-gradient-to-r from-purple-500 to-indigo-500 shadow-[0_0_10px_rgba(168,85,247,0.4)]"
-                      }`}
+                      className="h-full rounded-full bg-gradient-to-r from-zinc-500 via-zinc-200 to-white shadow-[0_0_10px_rgba(255,255,255,0.3)]"
                     />
                   </div>
 
@@ -211,9 +186,9 @@ export default function SkillsGrid() {
                     {skill.details.map((detail) => (
                       <span 
                         key={detail}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium text-zinc-400 bg-zinc-950/40 border border-white/5"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium text-zinc-400 bg-zinc-950/60 border border-white/5"
                       >
-                        <Sparkles className="w-2.5 h-2.5 text-purple-400" />
+                        <Sparkles className="w-2.5 h-2.5 text-zinc-400" />
                         {detail}
                       </span>
                     ))}
@@ -223,10 +198,10 @@ export default function SkillsGrid() {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-white/5 mt-6 flex justify-between items-center text-xs text-zinc-500 font-mono">
+          <div className="pt-6 border-t border-white/10 mt-6 flex justify-between items-center text-xs text-zinc-400 font-mono">
             <span>Verified Core Competencies</span>
-            <span className="flex items-center gap-1 text-purple-400">
-              <ShieldCheck className="w-4 h-4 text-purple-400 animate-pulse" />
+            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 animate-pulse" />
               Operational Master-Level
             </span>
           </div>

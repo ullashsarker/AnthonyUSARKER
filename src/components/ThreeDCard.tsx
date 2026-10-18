@@ -64,12 +64,7 @@ export default function ThreeDCard({
     y.set(0);
   };
 
-  const glowClass = 
-    glowColor === "cyan" 
-      ? "box-glow-blue shadow-indigo-950/20" 
-      : glowColor === "purple" 
-        ? "box-glow-purple shadow-purple-950/20" 
-        : "box-glow-dual";
+  const glowClass = "shadow-[0_8px_32px_rgba(0,0,0,0.6)]";
 
   if (!canTilt) {
     // Mobile & touch optimized rendering with zero 3D overhead
