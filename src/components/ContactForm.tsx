@@ -216,7 +216,7 @@ export default function ContactForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-all duration-300 shadow-[0_4px_20px_rgba(255,255,255,0.12)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none cursor-pointer flex items-center justify-center gap-2 group"
+              className="w-full py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-all duration-300 shadow-[0_4px_20px_rgba(255,255,255,0.12)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none cursor-pointer flex items-center justify-center gap-2 group btn-interactive"
             >
               {loading ? (
                 <span>Dispatching Message...</span>

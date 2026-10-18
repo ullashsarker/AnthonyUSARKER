@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play, Download } from "lucide-react";
 import { usePortfolioImage } from "../lib/imageStorage";
 import Typewriter from "./Typewriter";
 import MagneticButton from "./MagneticButton";
@@ -77,21 +77,33 @@ export default function HeroSection({ onNavigate }: HeroSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-wrap items-center gap-4 pt-2"
+            className="flex flex-wrap items-center gap-3.5 pt-2"
           >
             <MagneticButton strength={15}>
               <button
                 onClick={() => onNavigate("projects")}
-                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer group shadow-[0_4px_20px_rgba(255,255,255,0.12)] active:scale-95"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer group shadow-[0_4px_20px_rgba(255,255,255,0.12)] active:scale-95 btn-interactive"
               >
                 View My Work
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
             </MagneticButton>
 
+            <a
+              href="/anthony_cv.pdf"
+              download="Anthony_Ullash_Sarker_CV.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/10 border border-white/10 hover:border-white/25 text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer group shadow-sm active:scale-95 btn-interactive"
+              title="Download Official CV (PDF)"
+            >
+              <Download className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors" />
+              <span>Download CV</span>
+            </a>
+
             <button
               onClick={() => onNavigate("about")}
-              className="flex items-center gap-2 px-5 py-3 text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition-colors cursor-pointer group"
+              className="flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition-colors cursor-pointer group btn-interactive"
             >
               <div className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all">
                 <Play className="w-3.5 h-3.5 ml-0.5 text-zinc-200 group-hover:text-white transition-colors" />

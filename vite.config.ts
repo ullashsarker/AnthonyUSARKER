@@ -17,7 +17,7 @@ export default defineConfig(() => {
           if (!fs.existsSync(distDir)) return;
           const files = fs.readdirSync(rootDir);
           files.forEach(file => {
-            if (/\.(jpg|jpeg|png|webp|gif|svg)$/i.test(file)) {
+            if (/\.(jpg|jpeg|png|webp|gif|svg|pdf)$/i.test(file)) {
               try {
                 fs.copyFileSync(path.resolve(rootDir, file), path.resolve(distDir, file));
                 console.log(`Copied root asset ${file} to dist/`);

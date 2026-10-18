@@ -40,7 +40,7 @@ export default function QuickActionDock({
         {/* Primary Contact / Book Call Button */}
         <button
           onClick={onContactClick}
-          className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-all shadow-[0_2px_12px_rgba(255,255,255,0.15)] active:scale-95 cursor-pointer shrink-0"
+          className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition-all shadow-[0_2px_12px_rgba(255,255,255,0.15)] active:scale-95 cursor-pointer shrink-0 btn-interactive"
         >
           <CalendarCheck className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Book a Call</span>
@@ -109,11 +109,13 @@ export default function QuickActionDock({
 
         {/* Download Resume / CV */}
         <a
-          href="/api/download-cv"
-          download="Anthony_CV.pdf"
-          title="Download Official CV"
+          href="/anthony_cv.pdf"
+          download="Anthony_Ullash_Sarker_CV.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Download Official CV (Anthony Ullash Sarker)"
           aria-label="Download CV"
-          className="p-2 sm:p-2.5 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-all border border-transparent hover:border-white/20 cursor-pointer"
+          className="p-2 sm:p-2.5 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-all border border-transparent hover:border-white/20 cursor-pointer btn-interactive"
         >
           <Download className="w-4 h-4" />
         </a>

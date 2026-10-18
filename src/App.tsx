@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Home, User, Briefcase, FolderOpen, Code2, Compass, Mail,
-  Menu, X, Volume2, VolumeX, Sparkles, ArrowRight
+  Menu, X, Volume2, VolumeX, Sparkles, ArrowRight, Download
 } from "lucide-react";
 
 import ParticleBackground from "./components/ParticleBackground";
@@ -233,7 +233,7 @@ export default function App() {
           </nav>
           <button
             onClick={() => scrollToSection("contact")}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95 btn-interactive"
           >
             Let's Talk
             <ArrowRight className="w-3.5 h-3.5" />
@@ -291,6 +291,20 @@ export default function App() {
                         <span className="font-display font-bold text-base text-white">{stat.value}</span>
                       </div>
                     ))}
+                  </div>
+
+                  <div className="pt-2">
+                    <a
+                      href="/anthony_cv.pdf"
+                      download="Anthony_Ullash_Sarker_CV.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/10 border border-white/10 hover:border-white/20 text-white text-xs font-semibold transition-all group shadow-sm active:scale-95 btn-interactive"
+                      title="Download Official CV (PDF)"
+                    >
+                      <Download className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
+                      <span>Download Official CV (.PDF)</span>
+                    </a>
                   </div>
                 </div>
               </div>

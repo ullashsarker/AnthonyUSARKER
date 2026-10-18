@@ -81,7 +81,7 @@ export default function Sidebar({ activeSection, onNavigate }: SidebarProps) {
         {/* Available for Projects Box - Matte Frosted Card */}
         <div className="mx-1 p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
           <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3 border border-emerald-500/20">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 badge-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
           </div>
           <h4 className="font-display font-semibold text-sm text-white mb-1">Available for Projects</h4>
           <p className="text-[11px] text-zinc-400 leading-relaxed mb-3">
@@ -89,7 +89,7 @@ export default function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           </p>
           <button
             onClick={() => onNavigate("contact")}
-            className="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold transition-all cursor-pointer group shadow-sm active:scale-95"
+            className="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-bold transition-all cursor-pointer group shadow-sm active:scale-95 btn-interactive"
           >
             Hire Me
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -101,11 +101,14 @@ export default function Sidebar({ activeSection, onNavigate }: SidebarProps) {
       <div className="space-y-4 mt-4">
         {/* Download CV */}
         <a 
-          href="/api/download-cv" 
-          download="Anthony_CV.pdf"
-          className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+          href="/anthony_cv.pdf" 
+          download="Anthony_Ullash_Sarker_CV.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Download Official CV (Anthony Ullash Sarker)"
+          className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-400 hover:text-white transition-colors rounded-lg hover:bg-white/5 group btn-interactive"
         >
-          <Download className="w-4 h-4" />
+          <Download className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
           <span>Download CV</span>
         </a>
 
